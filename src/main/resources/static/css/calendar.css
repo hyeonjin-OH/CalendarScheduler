@@ -1,0 +1,162 @@
+#calendarBox{
+    width: 80%;
+    height:90%;
+    padding-left:15%;
+}
+.fullScreen{
+        width:100vw;
+        height:100vh;
+    }
+.material-symbols-rounded {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 200,
+    'opsz' 48
+}
+
+#modal.modal-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(1.5px);
+    border-radius: 10px;
+    z-index: 2;
+}
+#modal .modal-window {
+    background-color:#add8e6;
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    width: 420px;
+    height: 460px;
+    position: relative;
+    padding: 5px;
+    display: none;
+    justify-content: center;
+}
+#modal .modal-window-update {
+    background-color:#add8e6;
+
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    width: 420px;
+    height: 460px;
+    position: relative;
+    padding: 5px;
+    display: none;
+    justify-content: center;
+}
+#modal .close-area {
+    display: inline;
+    padding-right: 10px;
+    cursor: pointer;
+    color: #c0c0c0;
+    text-align: right;
+}
+.accountSpace{
+    box-sizing: border-box;
+    width:100%;
+    height:50px;
+    padding : 0px 10px 0px 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.192);
+    background-color: #add8e6;
+    margin-bottom: 20px;
+}
+.accountBlankSpace{
+    float:left;
+    width:80%;
+    height: 100%;
+    text-align: center;
+}
+.accountInfoSpace{
+    float:right;
+    width:200px;
+    min-width:120px;
+    height:100%;
+}
+.accountFreeNote{
+    box-sizing: border-box;
+    float:right;
+    width:50px;
+    height:100%;
+    justify-content: center;
+    display:flex;
+    align-items: center;
+    border-radius: 5px;
+    padding: 8px 0 8px 0;
+    margin: 0 2px 0 2px;
+    background-color: #add8e6;
+}
+.accountInfo{
+    box-sizing: border-box;
+    float:right;
+    width:50px;
+    height:100%;
+    justify-content: center;
+    display:flex;
+    align-items: center;
+    border-radius: 5px;
+    padding: 8px 0 8px 0;
+    margin: 0 2px 0 2px;
+    background-color: #add8e6;
+}
+.sub-account-wrap{
+    position:absolute;
+    top:50px;
+    right:5px;
+    width:200px;
+    display: none;
+    z-index: 100;
+}
+.sub-account{
+    background: #add8e6;
+    padding:10px;
+    margin:10px;
+}
+.user-info{
+    display:flex;
+    align-items:center;
+}
+.sub-account-link{
+    display:flex;
+    align-items: center;
+    text-decoration: none;
+    color: #525252;
+    margin:2px 0;
+    cursor:pointer;
+}
+.sub-account hr{
+    border:0;
+    height:1px;
+    width:100%;
+    background: #fff;
+    margin: 15px 0 10px;
+}
+.sub-account-link p{
+    width:100%;
+    margin: 10px 0 5px;
+}
+.sub-account-wrap div{
+    display: block;
+    text-decoration: none;
+}
+.accountInfo:hover .sub-account-wrap{
+    display:block;
+}
+.userinfo-nick{
+    font-weight:600;
+    color:#4682b4;
+    font-size : 1.5em;
+    margin-top:10px;
+    margin-bottom:10px;
+}

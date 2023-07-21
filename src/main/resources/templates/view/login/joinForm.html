@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" type="text/css" href="/css/basic.css" />
+
+<head>
+  <meta charset="utf8">
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <style>
+            .material-symbols-outlined {
+              font-variation-settings:
+              'FILL' 0,
+              'wght' 200,
+              'GRAD' -25,
+              'opsz' 10;
+              display:inline;
+              line-height:1;
+            }
+            .signSpace{
+                box-sizing: border-box;
+                width:100%;
+                height: 100%;
+                text-align: center;
+                background-color: #fff;
+                position: relative;
+                overflow-y:auto;
+
+            }
+            .signFormSpace{
+                box-sizing: border-box;
+                display: inline-block;
+
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+                width:450px;
+                height: 600px;
+                background-color: #add8e6;
+                opacity: 80%;
+                border-radius: 10px;
+                overflow-y: auto;
+            }
+            .signForm{
+                box-sizing: border-box;
+                display: inline-block;
+                width:70%;
+                height:85%;
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+            }
+
+            .signFormBox{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                
+            }
+             .signFormBox-id{
+                width:65%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:5px;
+            }
+            .signFormBox-id-button{
+              width:22%;
+              height: 40px;
+            }
+            .signFormBoxTopMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:5px 5px 0 5px;
+            }
+            .signFormBoxNoMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:0 5px 0 5px;
+            }
+            .signFormBoxBotMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:0 5px 5px 5px;
+            }
+            .signBtn{
+                width:90%;
+                height:45px;
+                border-radius: 5px;
+                cursor:pointer;
+                margin-top: 10px;
+                background-color: #4682b4;
+                border: none;
+            }
+        </style>
+</head>
+<body>
+<div class="fullScreen">
+  <div class="accountSpace">
+    <div class="accountInfoSpace">
+      <!-- <div class="accountSignin"> <a class="txtSignin">SIGN IN</a></div> -->
+      <div class="accountLogin" th:onclick="|location.href='@{/login}'|"> <a class="txtLogin">LOG IN</a> </div>
+    </div>
+  </div>
+
+  <div class="signSpace">
+    <div class="signFormSpace">
+      <div class="signForm">
+        <h1> 회 원 가 입 </h1>
+        <form action="" th:action th:object="${member}" method="post">
+          <div>
+            <input type="text" id="loginId" th:field="*{mbrId}" class="signFormBox-id" onkeyup="idKeyup()"
+                   placeholder="아이디" th:errorclass="field-error" pattern="^([a-z0-9_]){6,18}$"
+                   required />
+            <input type="hidden" id="idDupChk" value="N">
+            <button type="button" onclick="return false;" id="btnChkId" class="signFormBox-id-button">중복확인</button>
+            <div class="field-error" th:errors="*{mbrId}" />
+          </div>
+
+          <div>
+            <input type="password" id="password" th:field="*{mbrPwd}" class="signFormBoxTopMargin"
+                   placeholder="비밀번호" th:errorclass="field-error" pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_-+=[]{}~?:;`|/]).{8,20}$"
+                   required />
+            <input type="password" id="password2" class="signFormBoxBotMargin" onkeyup="validatePwd()"
+                   placeholder="비밀번호확인" pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_-+=[]{}~?:;`|/]).{6,20}$" required />
+            <div class="field-error" th:errors="*{mbrPwd}" />
+          </div>
+          <div>
+            <input type="text" id="nick" th:field="*{mbrNick}" class="signFormBoxTopMargin"
+                   placeholder="별칭" />
+            <div class="field-error" th:errors="*{mbrNick}" />
+          </div>
+          <div>
+            <input type="email" id="email" th:field="*{mbrEmail}" class="signFormBoxBotMargin"
+                   placeholder="이메일" th:errorclass="field-error" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+            <div class="field-error" th:errors="*{mbrEmail}" />
+          </div>
+          <div>
+            <select id="calendarType"  class="signFormBox" th:field="*{mbrCtgr}" onchange="selectedInvite()">
+              <option value="none" selected hidden>=== 생성할 캘린더 종류 선택 ===</option>
+              <option value="friend">친구</option>
+              <option value="personal">개인</option>
+              <option value="family">가족</option>
+              <option value="company">회사</option>
+              <option value="invite">초대코드로 생성</option>
+            </select>
+          </div>
+          <div class="hidden-box">
+            <input type="text" id="inviteCode" class="signFormBox-id" th:field="*{mbrSeqn}" placeholder="초대코드">
+            <button type="button" onclick="return false;" id="btnChkInvite" class="signFormBox-id-button">코드확인</button>
+          </div>
+          <div>
+            <select id="calendarColor"  class="signFormBox" th:field="*{mbrColr}" disabled>
+              <option value="none" selected hidden>=== 캘린더 표기 색상 ===</option>
+              <option value="green">초록</option>
+              <option value="skyblue">파랑</option>
+              <option value="palevioletred">분홍</option>
+              <option value="purple">보라</option>
+              <option value="gray">회색</option>
+            </select>
+          </div>
+          <input type="submit" onclick ="chkForm" id="submitSign" class="signBtn" value="회원가입">
+          <script>
+          let loginid = document.getElementById("loginId");
+          const saveid = $("#loginId").val();
+          
+          $(document).ready(function(){
+            var isIdChecked=false; //중복체크했을 땐 true로 변경
+            $("#btnChkId").on("click", function(e){
+               e.preventDefault();
+               $.ajax({
+                 url : "/join/idchk"
+                 ,data : {"mbrid" : $("#loginId").val()}
+                 ,async : false
+                 ,success :function(data){
+                    if(data){
+                      console.log("data:" + data)
+                      isIdChecked=true;
+                      $("#txtRes").text("사용가능한 아이디입니다.").css("color","green");
+                      $("#submitSign").prop("disabled", false);
+                      $("#idDupChk").val("Y");
+                      loginid.className = "signFormBox-id";
+                    }
+                    else{
+                        $("#submitSign").prop("disabled", true);
+                        $("#idDupChk").val("N");
+                        loginid.className +=" field-error";
+                    }
+                 },error : function(req,status,err){
+                     console.log(req);
+                 }
+              });
+            });
+            
+            $("#btnChkInvite").on("click", function(e){
+               e.preventDefault();
+               $.ajax({
+                 url : "/CalendarCategory/findCtgr"
+                 ,data : {"ctgrseqn" : $("#inviteCode").val()}
+                 ,async : false
+                 ,success :function(data){
+                   console.log("data : "+data);
+                    if(data != ""){
+                      $("#txtRes").text("").css("color","green");
+                      var codes = data.split(',')
+                      for(let i=0; i<codes.length; i++){
+                        $("#calendarColor option[value=" +codes[i]+"]").remove();
+                      }
+                      $("#calendarColor").prop("disabled", false);
+                    }
+                    else{
+                      $("#txtRes").text("유효하지 않은 초대코드입니다.").css("color","red");
+                      $("#calendarColor").css('disabled', 'disabled');
+                    }
+                 },error : function(req,status,err){
+                     console.log(req);
+                 }
+              });
+            });
+          });
+
+          function idKeyup(){
+            if((saveid != $("#loginId").val()) && ($("#idDupChk").val()=='Y')){
+              $("#txtRes").text("중복확인 후 ID 변경이 일어났습니다.").css("color","red");
+              $("#idDupChk").val("N");
+              loginid.className +=" field-error";
+              $("#submitSign").prop("disabled", true);
+            }
+          }
+
+          loginid.keyup = idKeyup;
+
+          const pwd = document.getElementById("password");
+          let pwd2= document.getElementById("password2");
+          let txtRes = document.getElementById("txtRes");
+
+          function validatePwd(){
+          if(pwd.value != pwd2.value){
+               pwd2.setCustomValidity("비밀번호가 일치하지 않습니다.");
+               if($("#idDupChk").val() == 'N'){
+                $("#txtRes").text("중복 아이디입니다.\n비밀번호가 일치하지 않습니다.");
+               }
+               else{
+               $("#txtRes").text("비밀번호가 일치하지 않습니다.").css("color","red");
+               }
+               pwd2.className +=" field-error";
+          }
+          else{
+               pwd2.setCustomValidity("");
+               if($("#idDupChk").val() == 'N'){
+                $("#txtRes").text("중복 아이디입니다.").css("color","red");
+               }
+               else{
+                $("#txtRes").text("");
+               }
+               pwd2.className ="signFormBoxBotMargin";
+            }
+          }
+          pwd2.keyup= validatePwd;
+            
+          function chkForm(){
+             if($("#idDupChk").val() == 'N')
+             {
+                 alert("아이디 중복확인을 하지 않으셨습니다.");
+                 return false;
+             }
+          }
+          function selectedInvite(){
+            var selected = document.querySelector("#calendarType");
+            var inputBox = document.querySelector(".hidden-box");
+
+            if(selected.options[selected.selectedIndex].value == "invite"){  
+              inputBox.style.display="block";
+            }
+            else{
+              inputBox.style.display="none";
+            }
+          }
+          
+           </script>
+          
+          <hr class = "line">
+          <p id ="txtRes">  </p>
+
+          <div class="join-rule-div">
+            <!--<span class="material-symbols-outlined">check_circle</span>-->
+            <span class="join-rule">• 아이디 : 영문숫자 혼용 6~18자리</span>
+            <br>
+            <!--<span class="material-symbols-outlined">check_circle</span>-->
+            <span class="join-rule">• 비밀번호 : 영문숫자특수문자 혼용 8~20자리</span>
+          </div>
+
+          <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:text="${err}">전체 오류 메시지</p> </div>
+          <div class="bot-blank"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" type="text/css" href="/css/basic.css" />
+
+<head>
+  <meta charset="utf8">
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <style>
+            .material-symbols-outlined {
+              font-variation-settings:
+              'FILL' 0,
+              'wght' 200,
+              'GRAD' -25,
+              'opsz' 10;
+              display:inline;
+              line-height:1;
+            }
+            .signSpace{
+                box-sizing: border-box;
+                width:100%;
+                height: 100%;
+                text-align: center;
+                background-color: #fff;
+                position: relative;
+                overflow-y:auto;
+
+            }
+            .signFormSpace{
+                box-sizing: border-box;
+                display: inline-block;
+
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+                width:450px;
+                height: 600px;
+                background-color: #add8e6;
+                opacity: 80%;
+                border-radius: 10px;
+                overflow-y: auto;
+            }
+            .signForm{
+                box-sizing: border-box;
+                display: inline-block;
+                width:70%;
+                height:85%;
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+            }
+
+            .signFormBox{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin : 5px 0 5px 0;
+            }
+             .signFormBox-id{
+                width:65%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:5px;
+            }
+            .signFormBoxTopMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:5px 5px 0 5px;
+            }
+            .signFormBoxNoMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:0 5px 0 5px;
+            }
+            .signFormBoxBotMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:0 5px 5px 5px;
+            }
+            .signBtn{
+                width:90%;
+                height:45px;
+                border-radius: 5px;
+                cursor:pointer;
+                margin-top: 10px;
+                background-color: #4682b4;
+                border: none;
+            }
+            .center-box{
+              align-items: center;
+              justify-content: center;
+            }
+
+        </style>
+</head>
+<body>
+<div class="fullScreen">
+  <div class="accountSpace">
+    <div class="accountInfoSpace">
+      <div class="accountSignin" th:onclick="|location.href='@{/join}'|"> <a class="txtSignin">SIGN IN</a></div>
+      <div class="accountLogin" th:onclick="|location.href='@{/login}'|"> <a class="txtLogin">LOG IN</a> </div>
+    </div>
+  </div>
+  
+  <div class="signSpace">
+    <div class="signFormSpace">
+      <div class="signForm">
+        <h1> 비밀번호 변경 </h1>
+        <form th:action th:object="${member}" method="post">
+          <div>
+            <input type="text" id="loginId" th:field="*{mbrId}" class="signFormBox"
+                   placeholder="아이디" th:value="*{mbrId}"/>
+          </div>
+          <div>
+            <input type="email" id="email" th:field="*{mbrEmail}" class="signFormBox" th:value="*{mbrEmail}" title="이메일"
+                   placeholder="이메일" th:errorclass="field-error" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+          </div>
+          <div class="center-box">
+            <button type="button" onclick="return false;" id="btnValidate" style="width:30%; height: 40px;">본인확인</button>
+          </div>
+          <div class="hidden-box">
+          <input type="password" id="password" th:field="*{mbrPwd}" class="signFormBoxTopMargin"
+                   placeholder="비밀번호변경" th:errorclass="field-error" pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_-+=[]{}~?:;`|/]).{8,20}$"/>
+            <input type="password" id="password2" class="signFormBoxBotMargin" onkeyup="validatePwd()"
+                   placeholder="비밀번호변경확인" pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_-+=[]{}~?:;`|/]).{8,20}$" />
+            <div class="field-error" th:errors="*{mbrPwd}" />
+            <input type="submit"  id="submitSign" class="signBtn" value="비밀번호 변경">
+          </div>
+          
+          <hr class = "line">
+          <p id ="txtRes">  </p>
+          
+          <div class="join-rule-div">
+            <span class="join-rule">• 비밀번호 : 영문숫자특수문자 혼용 8~20자리</span>
+          </div>
+          
+          <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:text="${err}">전체 오류 메시지</p> </div>
+          <div class="bot-blank"></div>
+          <script>
+          let loginid = document.getElementById("loginId");
+          const saveid = $("#loginId").val();
+          
+          $(document).ready(function(){
+            $("#btnValidate").on("click", function(e){
+              console.log("clicked");
+               e.preventDefault();
+               $.ajax({
+                 url : "/login/find/idVal"
+                 ,method:"get"
+                 ,async : false
+                 ,data : {"mbrid" : $("#loginId").val(), "mbremail":$("#email").val()}
+                 ,success :function(data){
+                 console.log("data : "+data);
+                    if(data){
+                      $("#txtRes").text("유효한 계정입니다.").css("color","green");
+                      $(".hidden-box").css("display","block");
+                    }
+                    else{
+                        $("#txtRes").text("유효하지 않은 계정입니다.").css("color","red");
+                        $(".hidden-box").css("display","none");
+                    }
+                 },error : function(req,status,err){
+                     console.log(req);
+                 }
+              });
+            });
+          });
+          
+          const pwd = document.getElementById("password");
+          let pwd2= document.getElementById("password2");
+          let txtRes = document.getElementById("txtRes");
+
+          function validatePwd(){
+          if(pwd.value != pwd2.value){
+               pwd2.setCustomValidity("비밀번호가 일치하지 않습니다.");
+               if($("#idDupChk").val() == 'N'){
+                $("#txtRes").text("중복 아이디입니다.\n비밀번호가 일치하지 않습니다.");
+               }
+               else{
+               $("#txtRes").text("비밀번호가 일치하지 않습니다.").css("color","red");
+               }
+               pwd2.className +=" field-error";
+          }
+          else{
+               pwd2.setCustomValidity("");
+               if($("#idDupChk").val() == 'N'){
+                $("#txtRes").text("중복 아이디입니다.").css("color","red");
+               }
+               else{
+                $("#txtRes").text("");
+               }
+               pwd2.className ="signFormBoxBotMargin";
+            }
+          }
+          pwd2.keyup= validatePwd;
+          
+          function selectedInvite(){
+            var inputBox = document.querySelector(".hidden-box");
+
+            if(selected.options[selected.selectedIndex].value == "invite"){
+              inputBox.style.display="block";
+            }
+            else{
+              inputBox.style.display="none";
+            }
+          }
+           </script>
+        
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

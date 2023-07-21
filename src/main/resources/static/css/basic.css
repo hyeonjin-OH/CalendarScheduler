@@ -1,0 +1,166 @@
+            .fullScreen{
+                width:100vw;
+                height:100vh;
+            }
+            .topBlankSpace{
+                box-sizing: border-box;
+                width:100%;
+                height: 50px;
+            }
+            .accountSpace{
+                box-sizing: border-box;
+                width:100%;
+                height:50px;
+                padding : 0px 10px 0px 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.192);
+            }
+            .accountBlankSpace{
+                box-sizing: border-box;
+                float:left;
+                width:80%;
+                height: 100%;
+                text-align: center;
+            }
+            .accountInfoSpace{
+                box-sizing: border-box;
+                float:right;
+                width:300px;
+                height:100%;
+                padding: 5px;
+            }
+            .accountLogin{
+                box-sizing: border-box;
+                float:right;
+                width:100px;
+                height: 100%;
+                text-align: center;
+                border-radius: 10px;
+                padding: 9px 0 9px 0;
+                margin: 0 2px 0 2px;
+                background-color: #add8e6;
+                cursor: pointer;
+            }
+            .txtLogin{
+                font-size: 1.1em;
+                text-align: center;
+                color :#fff;
+                font-weight: 700;
+                -webkit-text-stroke: 0.5px #c0c0c0;
+            }
+            .accountSignin{
+                box-sizing: border-box;
+                float:right;
+                width:100px;
+                height: 100%;
+                text-align: center;
+                border-radius: 10px;
+                padding: 9px 0 9px 0;
+                margin: 0 2px 0 2px;
+                background-color: #add8e6;
+                cursor: pointer;
+            }
+            .txtSignin{
+                font-size: 1.1em;
+                text-align: center;
+                color :#fff;
+                font-weight: 700;
+                -webkit-text-stroke: 0.5px #c0c0c0;
+            }
+            .loginSpace{
+                box-sizing: border-box;
+                width:100%;
+                height: 100%;
+                text-align: center;
+                background-color: #fff;
+                position: relative;
+            }
+            .loginFormSpace{
+                box-sizing: border-box;
+                display: inline-block;
+                width:450px;
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+                height: 600px;
+                background-color: #add8e6;
+                opacity: 80%;
+                border-radius: 5px;
+            }
+            .loginForm{
+                box-sizing: border-box;
+                display: inline-block;
+                width:70%;
+                height:80%;
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+            }
+
+            .loginFormBox{
+                width:90%;
+                height: 40px;
+                padding:20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:5px;
+            }
+            .loginBtn{
+                width:90%;
+                height:45px;
+                border-radius: 5px;
+                margin-top: 10px;
+                background-color: #4682b4;
+                border: none;
+                cursor: pointer;
+            }
+            .line{
+                box-sizing: border-box;
+                width:100%;
+                height:2px;
+                text-align: center;
+                color:#fff;
+                border-bottom: 0px;
+                margin-top: 30px;
+                margin-bottom: 30px;
+            }
+            .errorSpace{
+               margin-top: 10px;
+               margin-bottom: 20px;
+            }
+            .field-error {
+              border-color: #dc3545;
+              color: #dc3545;
+            }
+            .project-div{
+              text-align:left;
+              padding-top:30px;
+              padding-left:30px;
+            }
+            .project-text{
+              font-size:1.2em;
+            }
+            .hidden-box{
+                display:none;
+            }
+
+            #txtRes{
+              font-size:1em;
+            }
+            .join-rule-div{
+              box-sizing: border-box;
+              text-align : left;
+            }
+            .join-rule{
+              font-size: 0.8em;
+              display:inline;
+            }
+            .bot-blank{
+                box-sizing: border-box;
+                width:100%;
+                height:20px;
+                background-color: transparent;
+
+            }

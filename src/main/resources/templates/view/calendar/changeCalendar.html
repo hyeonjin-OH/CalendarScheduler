@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" type="text/css" href="/css/basic.css" />
+<link rel="stylesheet" type="text/css" href="/css/calendar.css" />
+
+<head>
+  <meta charset="utf8">
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <style>
+            .material-symbols-outlined {
+              font-variation-settings:
+              'FILL' 0,
+              'wght' 200,
+              'GRAD' -25,
+              'opsz' 10;
+              display:inline;
+              line-height:1;
+            }
+            .signSpace{
+                box-sizing: border-box;
+                width:100%;
+                height: 100%;
+                text-align: center;
+                background-color: #fff;
+                position: relative;
+                overflow-y:auto;
+
+            }
+            .signFormSpace{
+                box-sizing: border-box;
+                display: inline-block;
+
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+                width:450px;
+                height: 600px;
+                background-color: #add8e6;
+                opacity: 80%;
+                border-radius: 10px;
+                overflow-y: auto;
+            }
+            .signForm{
+                box-sizing: border-box;
+                display: inline-block;
+                width:70%;
+                height:85%;
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-50%);
+            }
+
+            .signFormBox{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                
+            }
+             .signFormBox-id{
+                width:65%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:5px;
+            }
+            .signFormBox-id-button{
+              width:22%;
+              height: 40px;
+            }
+            .signFormBoxTopMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:5px 5px 0 5px;
+            }
+            .signFormBoxNoMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:0 5px 0 5px;
+            }
+            .signFormBoxBotMargin{
+                width:90%;
+                height: 40px;
+                padding: 0 0 0 20px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                margin:0 5px 5px 5px;
+            }
+            .signBtn{
+                width:90%;
+                height:45px;
+                border-radius: 5px;
+                cursor:pointer;
+                margin-top: 10px;
+                background-color: #4682b4;
+                border: none;
+            }
+        </style>
+</head>
+<body>
+<div class="fullScreen">
+  <div class="accountSpace">
+    <div class="accountInfoSpace">
+      <div class="accountInfo"><span class="material-symbols-outlined">density_medium</span>
+        <div class="sub-account-wrap">
+          <div class="sub-account">
+            <div class ="user-info">
+              <p class = "userinfo-nick" th:text="|${member.mbrNick} 님|">TEST</p>
+              <input type="hidden" id="loginMbrId" th:value="${member.mbrId}"/>
+            </div>
+            <hr>
+            <a th:onclick="|location.href='@{/update}'|" class="sub-account-link">
+              <span class="material-symbols-outlined">account_circle</span><p>&nbsp;&nbsp;프로필수정</p>
+            </a>
+            <a href="#" class="sub-account-link">
+              <span class="material-symbols-outlined">add_ad</span><p>&nbsp;&nbsp;캘린더 추가</p>
+            </a>
+            <a href="#" class="sub-account-link">
+              <span class="material-symbols-outlined">select_window</span><p>&nbsp;&nbsp;캘린더 변경</p>
+            </a>
+            <form th:action="@{/logout}" method="post" class="sub-account-link">
+              <a href="javascript:;" onclick="parentNode.submit();" class="sub-account-link">
+                <span class="material-symbols-outlined">logout</span><p>&nbsp;&nbsp;로그아웃</p>
+              </a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="signSpace">
+    <div class="signFormSpace">
+      <div class="signForm">
+        <h1> 캘린더 추가 </h1>
+        <form th:action th:object="${member}" method="post">
+          <input type="hidden" th:field="*{Id}" th:value="*{Id}"/>
+          <div>
+            <input type="text" id="loginId" th:field="*{mbrId}" class="signFormBox" style="background-color:#c0c0c0"
+                   placeholder="아이디" th:value="*{mbrId}" readonly/>
+          </div>
+          <div>
+            <select id="calendarType"  class="signFormBox" th:field="*{mbrCtgr}" onchange="selectedInvite()">
+              <option value="none" selected hidden>=== 생성할 캘린더 종류 선택 ===</option>
+              <option value="friend">친구</option>
+              <option value="personal">개인</option>
+              <option value="family">가족</option>
+              <option value="company">회사</option>
+              <option value="invite">초대코드로 생성</option>
+            </select>
+          </div>
+          <div class="hidden-box">
+            <input type="text" id="inviteCode" class="signFormBox-id" th:field="*{mbrSeqn}" placeholder="초대코드">
+            <button type="button" onclick="return false;" id="btnChkInvite" class="signFormBox-id-button">코드확인</button>
+          </div>
+          <div>
+            <select id="calendarColor"  class="signFormBox" th:field="*{mbrColr}" disabled>
+              <option value="none" selected hidden>=== 캘린더 표기 색상 ===</option>
+              <option value="green">초록</option>
+              <option value="skyblue">파랑</option>
+              <option value="palevioletred">분홍</option>
+              <option value="purple">보라</option>
+              <option value="gray">회색</option>
+            </select>
+          </div>
+          <input type="submit" onclick ="chkForm" id="submitSign" class="signBtn" value="캘린더추가">
+          <script>
+          let loginid = document.getElementById("loginId");
+          const saveid = $("#loginId").val();
+
+          function selectedInvite(){
+            var selected = document.querySelector("#calendarType");
+            var inputBox = document.querySelector(".hidden-box");
+            
+            if(selected.options[selected.selectedIndex].value == "invite"){  
+              inputBox.style.display="block";
+            }
+            else{
+              inputBox.style.display="none";
+            }
+          }
+          
+          $(document).ready(function(){
+            $("#btnChkInvite").on("click", function(e){
+               e.preventDefault();
+               $.ajax({
+                 url : "/CalendarCategory/findCtgr"
+                 ,data : {"ctgrseqn" : $("#inviteCode").val()}
+                 ,async : false
+                 ,success :function(data){
+                   console.log("data : "+data);
+                    if(data != ""){
+                      $("#txtRes").text("").css("color","green");
+                      var codes = data.split(',')
+                      for(let i=0; i<codes.length; i++){
+                        $("#calendarColor option[value=" +codes[i]+"]").remove();  
+                      }
+                      $("#calendarColor").prop("disabled", false);
+                    }
+                    else{
+                      $("#txtRes").text("유효하지 않은 초대코드입니다.").css("color","red");
+                      $("#calendarColor").css('disabled', 'disabled');
+                    }
+                 },error : function(req,status,err){
+                     console.log(req);
+                 }
+              });
+            });
+          });
+          
+           </script>
+          
+          <hr class = "line">
+          <p id ="txtRes">  </p>
+
+          <div class="join-rule-div">
+            <span class="join-rule">• 캘린더 추가 시 추가한 캘린더가 기본 캘린더로 설정됩니다.</span>
+            <br>
+            <span class="join-rule">• 기본 캘린더를 변경하고 싶다면 캘린더 변경에서 작업하시면 됩니다.</span>
+          </div>
+
+          <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:text="${err}">전체 오류 메시지</p> </div>
+          <div class="bot-blank"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

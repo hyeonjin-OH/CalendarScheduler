@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>calendar</title>
+  
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.7.0/main.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/schedule.css" />
+  <link rel="stylesheet" type="text/css" href="/css/calendar.css" />
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fullcalendar@5.7.0/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.8/index.global.min.js"></script>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="/js/calendar.js" defer></script>
+
+</head>
+<body>
+<div class="fullScreen">
+  <div id="modal" class="fullScreen modal-overlay" >
+    <div  class="modal-window" >
+      <form action="" id = "schedulePop" th:action="@{/schedulePop}" th:object="${schedule}"
+            method="post"  class = "schedule_form">
+        <div class="schedule_subject">
+          <input type="hidden" th:field="*{scdSeqn}" th:value="${scdSeqn}" />
+          <input type="hidden" th:field="*{scdId}" th:value="${scdId}" />
+          <input type="hidden" th:field="*{scdColr}" th:value="${scdColr}" />
+          <div class="schedule_text_div">
+            <label for="subject" class="schedule_text">일정명 </label>
+          </div>
+          <input type="text" id="subject" th:field="*{scdTitle}" class="schedule_subject_box">
+        </div>
+        <div class="schedule_date">
+          <div class="schedule_day">
+            <div class="schedule_text_div">
+              <label for="frdt" class="schedule_text">시작일자</label>
+            </div>
+            <div class="schedule_date_box_div">
+              <input type="date" id="frdt" th:field="*{scdFrdt}" class="schedule_date_box" />
+            </div>
+            <div class="schedule_time_check_div">
+              <input type="checkbox" id = "frtm_C" th:field="*{scdFrtmchk}" class="schedule_time_check">
+            </div>
+            <div class="schedule_text_div">
+              <label for="frtm" class="schedule_text">시작시간</label>
+            </div>
+            <input type="time" id="frtm" th:field="*{scdFrtm}" class="schedule_time_box" />
+          </div>
+          <div class="schedule_day">
+            <div class="schedule_text_div">
+              <label for="todt" class="schedule_text">종료일자</label>
+            </div>
+            <div class="schedule_date_box_div">
+              <input type="date" id="todt" th:field="*{scdTodt}" class="schedule_date_box" />
+            </div>
+            <div class="schedule_time_check_div">
+              <input type="checkbox" id = "totm_C" th:field="*{scdTotmchk}" class="schedule_time_check">
+            </div>
+            <div class="schedule_text_div">
+              <label for="totm" class="schedule_text">종료시간</label>
+            </div>
+            <input type="time" id="totm" th:field="*{scdTotm}" class="schedule_time_box" />
+          </div>
+        </div>
+        <div class="schedule_contents">
+          <div class="schedule_text_div">
+            <label for="subject" class="schedule_text">일정내용 </label>
+          </div>
+          <input type="text" id="contents" th:field="*{scdCnts}" class="schedule_contents_box" />
+        </div>
+        <div class="schedule_etc">
+        
+        </div>
+        <div class="schedule_detail_div">
+          <span class="schedule_text">• 체크박스 체크 시 기본 시간 설정</span>
+        </div>
+        <div class="schedule_submit_div">
+          <input type="submit" class="schedule_btn"  th:onclick="|location.href='@{/schedulePop}'|" onclick="makeSchedule"
+                 value="일정등록" />
+        </div>
+      </form>
+    </div>
+    <div  class="modal-window-update" >
+      <form action="" id = "schedulePop_update" th:action th:object="${schedule}"
+            method="post"  class = "schedule_form">
+        <div class="schedule_subject">
+          <input type="hidden" th:field="*{scdSeqn}" th:value="${scdSeqn}" />
+          <input type="hidden" th:field="*{scdId}" th:value="${scdId}" />
+          <input type="hidden" th:field="*{scdColr}" th:value="${scdColr}" />
+          <div class="schedule_text_div">
+            <label for="subject" class="schedule_text">일정명 </label>
+          </div>
+          <input type="text" id="subject_update" th:field="*{scdTitle}" class="schedule_subject_box">
+        </div>
+        <div class="schedule_date">
+          <div class="schedule_day">
+            <div class="schedule_text_div">
+              <label for="frdt" class="schedule_text">시작일자</label>
+            </div>
+            <div class="schedule_date_box_div">
+              <input type="date" id="frdt_update" th:field="*{scdFrdt}" class="schedule_date_box" />
+            </div>
+            <div class="schedule_time_check_div">
+              <input type="checkbox" id = "frtm_C_update" th:field="*{scdFrtmchk}" class="schedule_time_check">
+            </div>
+            <div class="schedule_text_div">
+              <label for="frtm" class="schedule_text">시작시간</label>
+            </div>
+            <input type="time" id="frtm_update" th:field="*{scdFrtm}" class="schedule_time_box" />
+          </div>
+          <div class="schedule_day">
+            <div class="schedule_text_div">
+              <label for="todt" class="schedule_text">종료일자</label>
+            </div>
+            <div class="schedule_date_box_div">
+              <input type="date" id="todt_update" th:field="*{scdTodt}" class="schedule_date_box" />
+            </div>
+            <div class="schedule_time_check_div">
+              <input type="checkbox" id = "totm_C_update" th:field="*{scdTotmchk}" class="schedule_time_check">
+            </div>
+            <div class="schedule_text_div">
+              <label for="totm" class="schedule_text">종료시간</label>
+            </div>
+            <input type="time" id="totm_update" th:field="*{scdTotm}" class="schedule_time_box" />
+          </div>
+        </div>
+        <div class="schedule_contents">
+          <div class="schedule_text_div">
+            <label for="subject" class="schedule_text">일정내용 </label>
+          </div>
+          <input type="text" id="contents_update" th:field="*{scdCnts}" class="schedule_contents_box" />
+        </div>
+        <div class="schedule_etc">
+        
+        </div>
+        <div class="schedule_detail_div">
+          <span class="schedule_text">• 체크박스 체크 시 기본 시간 설정</span>
+        </div>
+        <div class="schedule_submit_div">
+            <button type="submit" id = "submitEdit" class="schedule_btn_edit">일정수정</button>
+            <button type="submit" id = "submitDel" class="schedule_btn_edit" >일정삭제</button>
+        </div>
+      </form>
+    </div>
+    <div  class="close-area"><span class="material-symbols-rounded">cancel</span></div>
+  </div>
+  
+  <div class="accountSpace">
+    <input type="hidden" id="calSeqn" th:value="${scdSeqn}">
+    <input type="hidden" id="calColr" th:value="${scdColr}">
+    <div class="accountInfoSpace">
+      <div class="accountInfo"><span class="material-symbols-outlined">density_medium</span>
+        <div class="sub-account-wrap">
+          <div class="sub-account">
+            <div class ="user-info">
+              <p class = "userinfo-nick" th:text="|${member.mbrNick} 님|">TEST</p>
+              <input type="hidden" id="loginMbrId" th:value="${member.mbrId}"/>
+            </div>
+            <hr>
+            <a th:onclick="|location.href='@{/update}'|" class="sub-account-link">
+              <span class="material-symbols-outlined">account_circle</span><p>&nbsp;&nbsp;프로필수정</p>
+            </a>
+            <a th:onclick="|location.href='@{/Calendar/add}'|" class="sub-account-link">
+              <span class="material-symbols-outlined">add_ad</span><p>&nbsp;&nbsp;캘린더 추가</p>
+            </a>
+            <a href="#" class="sub-account-link">
+              <span class="material-symbols-outlined">select_window</span><p>&nbsp;&nbsp;캘린더 변경</p>
+            </a>
+            <form th:action="@{/logout}" method="post" class="sub-account-link">
+              <a href="javascript:;" onclick="parentNode.submit();" class="sub-account-link">
+                <span class="material-symbols-outlined">logout</span><p>&nbsp;&nbsp;로그아웃</p>
+              </a>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="accountFreeNote"><span class="material-symbols-outlined">event_note</span></div>
+    </div>
+  </div>
+  
+  <div id="calendarBox">
+    <div id="calendar"></div>
+  </div>
+</div>
+
+</body>
+</html>

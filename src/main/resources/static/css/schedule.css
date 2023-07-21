@@ -1,0 +1,117 @@
+.schedule_form{
+    padding-top:20px;
+}
+.schedule_subject{
+    padding : 5px 10px 5px 10px;
+    height:50px;
+    display : flex;
+    align-items : center;
+}
+.schedule_text_div{
+    width:60px;
+    height:30px;
+    float:left;
+    display: flex;
+    align-items: center;
+}
+.schedule_text{
+    font-size : 0.9em;
+}
+.schedule_subject_box{
+    box-sizing: border-box;
+    width:325px;
+    height:30px;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+    float:left;
+}
+.schedule_date{
+    padding : 5px 10px 5px 10px;
+    height:80px;
+}
+.schedule_day{
+    box-sizing:border-box;
+    width:100%;
+    height:35px;
+    padding : 3px 0 3px 0;
+}
+.schedule_time_check_div{
+    width:20px;
+    height:25px;
+    float:left;
+    display: flex;
+    align-items: center;
+}
+.schedule_time_check{
+    width:10px;
+    height:25px;
+}
+.schedule_time_box{
+    width:105px;
+    height:25px;
+    float:left;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+}
+.schedule_date_box_div{
+    width:120px;
+    height:25px;
+    padding-right:15px;
+    float:left;
+}
+.schedule_date_box{
+    width:120px;
+    height:25px;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+}
+.schedule_contents{
+    padding : 5px 10px 5px 10px;
+    height:85px;
+    display : flex;
+    align-items : center;
+}
+.schedule_contents_box{
+    box-sizing: border-box;
+    width:325px;
+    border-radius: 5px;
+    border: 1px solid #c0c0c0;
+    height:80px;
+    overflow-y:auto;
+    float:left;
+}
+.schedule_etc{
+    padding : 5px 10px 5px 10px;
+    height:40px;
+}
+.schedule_detail_div{
+    padding : 5px 10px 5px 10px;
+    height:40px;
+}
+.schedule_submit_div{
+    padding : 5px 10px 5px 10px;
+    height:40px;
+    justify-content: center;
+    display: flex;
+}
+.schedule_btn{
+    width:150px;
+    height:30px;
+    border-radius: 5px;
+
+    margin-top: 10px;
+    background-color: #4682b4;
+    border: none;
+    cursor: pointer;
+}
+.schedule_btn_edit{
+    width:100px;
+    height:30px;
+    border-radius: 5px;
+
+    margin-top: 10px;
+    margin-left : 10px;
+    background-color: #4682b4;
+    border: none;
+    cursor: pointer;
+}

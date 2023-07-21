@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <meta charset="utf-8">
+
+    <style>
+        .material-symbols-rounded {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 200,
+          'opsz' 48
+        }
+
+        #modal.modal-overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(1.5px);
+            border-radius: 10px;
+        }
+        #modal .modal-window {
+            background-color:#add8e6;
+            
+            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+            border-radius: 10px;
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+            width: 420px;
+            height: 460px;
+            position: relative;
+            padding: 5px;
+            display: none;
+            justify-content: center;
+        }
+        #modal .close-area {
+            display: inline;
+            padding-right: 10px;
+            cursor: pointer;
+            color: #c0c0c0;
+            text-align: right;
+        }
+            .material-symbols-outlined {
+                font-variation-settings:
+                'FILL' 0,
+                'wght' 300,
+                'GRAD' 200,
+                'opsz' 200;
+                color:#fff;
+                -webkit-text-stroke: 0.5px #c0c0c0;
+            }
+            .fullScreen{
+                width:100vw;
+                height:100vh;
+            }
+            .topBlankSpace{
+                box-sizing: border-box;
+                width:100%;
+                height: 50px;
+            }
+            .accountSpace{
+                box-sizing: border-box;
+                width:100%;
+                height:50px;
+                padding : 0px 10px 0px 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.192);
+                background-color: #add8e6;
+
+            }
+            .accountBlankSpace{
+                float:left;
+                width:80%;
+                height: 100%;
+                text-align: center;
+            }
+            .accountInfoSpace{
+                float:right;
+                width:200px;
+                min-width:120px;
+                height:100%;
+
+            }
+            .accountFreeNote{
+                box-sizing: border-box;
+                float:right;
+                width:50px;
+                height:100%;
+                justify-content: center;
+                display:flex;
+                align-items: center;
+                border-radius: 5px;
+                padding: 8px 0 8px 0;
+                margin: 0 2px 0 2px;
+                background-color: #add8e6;
+            }
+            .accountInfo{
+                box-sizing: border-box;
+                float:right;
+                width:50px;
+                height:100%;
+                justify-content: center;
+                display:flex;
+                align-items: center;
+                border-radius: 5px;
+                padding: 8px 0 8px 0;
+                margin: 0 2px 0 2px;
+                background-color: #add8e6;
+            }
+            .sub-account-wrap{
+                position:absolute;
+                top:50px;
+                right:5px;
+                width:200px;
+                display: none;
+                z-index: 100;
+            }
+            .sub-account{
+                background: #add8e6;
+                padding:10px;
+                margin:10px;
+            }
+            .user-info{
+                display:flex;
+                align-items:center;
+            }
+            .sub-account-link{
+                display:flex;
+                align-items: center;
+                text-decoration: none;
+                color: #525252;
+                margin:2px 0;
+            }
+            .sub-account hr{
+                border:0;
+                height:1px;
+                width:100%;
+                background: #fff;
+                margin: 15px 0 10px;
+            }
+            .sub-account-link p{
+                width:100%;
+                margin: 10px 0 5px;
+            }
+            .sub-account-wrap div{
+                display: block;
+                text-decoration: none;
+            }
+            .accountInfo:hover .sub-account-wrap{
+                display:block;
+            }
+            .calendarSpace{
+                box-sizing: border-box;
+                width:100%;
+                height:75%;
+                min-width:1000px;
+                padding : 10px 150px 10px 150px;
+                margin: auto;
+                text-align: center;
+            }
+            .menuSpace{
+                box-sizing: border-box;
+                width:100%;
+                height:40px;
+                margin:5px 0px 5px 0px;
+            }
+            .subjectSpace{
+                box-sizing: border-box;
+                width:100%;
+                height:70px;
+                margin:5px 0px 5px 0px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            /*.subjectArrow{
+                display:flex;
+                align-items: center;
+                width:40px;
+                height:60px;
+            }*/
+            .subjectArrowL{
+                display:flex;
+                align-items: center;
+                width:30px;
+                height:100%;
+            }
+            .subjectArrowR{
+                display:flex;
+                align-items: center;
+                width:30px;
+                height:100%;
+                float:right;
+            }
+            .txtArrow{
+                font-style:bold;
+                font-size:1.7em;
+                margin:0px;
+            }
+            .subjectYYYYMM{
+                width:120px;
+                align-content: center;
+            }
+            .subjectYYYYMMval{
+                text-align: center;
+                font-style:bold;
+            }
+            .calendarLink{
+                float:left;
+                width:30%;
+                height: 90%;
+            }
+            .calendarLinkBlank{
+                float:left;
+                width:65%;
+                height: 90%;
+            }
+            .c_body_col{
+                width:14%;
+            }
+            .c_body_main{
+                box-sizing: border-box;
+                border-collapse: separate;
+                width:100%;
+                height: 100%;
+                margin: auto;
+            }
+            #calendar_m{
+                box-sizing: border-box;
+                max-width: 100%;
+                height:80%;
+                width:100%;
+                display:inline-block;
+            }
+
+            .c_body_cell{
+                border:1px solid black;
+                border-bottom-style:none;
+                border-left-style:none;
+                border-right-style:none;
+                text-align: left;
+                vertical-align:text-top;
+                height:7%;
+                font-weight: bold;
+            }
+            .othercell{
+                color :#c0c0c0;
+            }
+            #col00, #col10, #col20, #col30, #col40, #col50{
+                color:red;
+                font-weight: bold;
+            }
+            #col00.othercell, #col10.othercell, #col20.othercell, #col30.othercell, #col40.othercell, #col50.othercell{
+                color:rgb(255, 147, 147);
+                font-weight: bold;
+            }
+            #col06, #col16, #col26, #col36, #col46, #col56{
+                color:blue;
+                font-weight: bold;
+            }
+            .userinfo-nick{
+                font-weight:600;
+                color:#4682b4;
+                font-size : 1.5em;
+                margin-top:10px;
+                margin-bottom:10px;
+            }
+            .schedule_form{
+                padding-top:20px;
+            }
+            .schedule_subject{
+                padding : 5px 10px 5px 10px;
+                height:50px;
+                display : flex;
+                align-items : center;
+            }
+            .schedule_text_div{
+                width:60px;
+                height:30px;
+                float:left;
+                display: flex;
+                align-items: center;
+            }
+            .schedule_text{
+                font-size : 0.9em;
+            }
+            .schedule_subject_box{
+                box-sizing: border-box;
+                width:325px;
+                height:30px;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                float:left;
+            }
+            .schedule_date{
+                padding : 5px 10px 5px 10px;
+                height:80px;
+            }
+            .schedule_day{
+                box-sizing:border-box;
+                width:100%;
+                height:35px;
+                padding : 3px 0 3px 0;
+            }
+            .schedule_time_check_div{
+                width:20px;
+                height:25px;
+                float:left;
+                display: flex;
+                align-items: center;
+            }
+            .schedule_time_check{
+                width:10px;
+                height:25px;
+            }
+            .schedule_time_box{
+                width:105px;
+                height:25px;
+                float:left;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+            }
+            .schedule_date_box_div{
+                width:120px;
+                height:25px;
+                padding-right:15px;
+                float:left;
+            }
+            .schedule_date_box{
+                width:120px;
+                height:25px;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+            }
+            .schedule_contents{
+                padding : 5px 10px 5px 10px;
+                height:85px;
+                display : flex;
+                align-items : center;
+            }
+            .schedule_contents_box{
+                box-sizing: border-box;
+                width:325px;
+                border-radius: 5px;
+                border: 1px solid #c0c0c0;
+                height:80px;
+                overflow-y:auto;
+                float:left;
+            }
+            .schedule_etc{
+                padding : 5px 10px 5px 10px;
+                height:40px;
+            }
+            .schedule_detail_div{
+                padding : 5px 10px 5px 10px;
+                height:40px;
+            }
+            .schedule_submit_div{
+                padding : 5px 10px 5px 10px;
+                height:40px;
+                justify-content: center;
+                display: flex;
+            }
+            .schedule_btn{
+                width:150px;
+                height:30px;
+                border-radius: 5px;
+
+                margin-top: 10px;
+                background-color: #4682b4;
+                border: none;
+            }
+
+        </style>
+</head>
+<body>
+<div class="fullScreen">
+    <div id="modal" class="fullScreen modal-overlay" >
+        <div class="modal-window" >
+            <form action="" th:action="@{/monthCalendar}" th:object="${schedule}" method="post"  class = "schedule_form">
+                <div class="schedule_subject">
+                    <input type="hidden" th:field="*{scdSeqn}" th:value="${scdSeqn}" />
+                    <input type="hidden" th:field="*{scdId}" th:value="${scdId}" />
+                    
+                    <div class="schedule_text_div">
+                        <label for="subject" class="schedule_text">일정명 </label>
+                    </div>
+                    <input type="text" id="subject" th:field="*{scdTitle}" class="schedule_subject_box" />
+                </div>
+                <div class="schedule_date">
+                    <div class="schedule_day">
+                        <div class="schedule_text_div">
+                            <label for="frdt" class="schedule_text">시작일자</label>
+                        </div>
+                        <div class="schedule_date_box_div">
+                            <input type="date" id="frdt" th:field="*{scdFrdt}" class="schedule_date_box" />
+                        </div>
+                        <div class="schedule_time_check_div">
+                            <input type="checkbox" id = "frtm_C" th:field="*{scdFrtmchk}" class="schedule_time_check">
+                        </div>
+                        <div class="schedule_text_div">
+                            <label for="frtm" class="schedule_text">시작시간</label>
+                        </div>
+                        <input type="time" id="frtm" th:field="*{scdFrtm}" class="schedule_time_box" />
+                    </div>
+                    <div class="schedule_day">
+                        <div class="schedule_text_div">
+                            <label for="todt" class="schedule_text">종료일자</label>
+                        </div>
+                        <div class="schedule_date_box_div">
+                            <input type="date" id="todt" th:field="*{scdTodt}" class="schedule_date_box" />
+                        </div>
+                        <div class="schedule_time_check_div">
+                            <input type="checkbox" id = "totm_C" th:field="*{scdTotmchk}" class="schedule_time_check">
+                        </div>
+                        <div class="schedule_text_div">
+                            <label for="totm" class="schedule_text">종료시간</label>
+                        </div>
+                        <input type="time" id="totm" th:field="*{scdTotm}" class="schedule_time_box" />
+                    </div>
+                </div>
+                <div class="schedule_contents">
+                    <div class="schedule_text_div">
+                        <label for="subject" class="schedule_text">일정내용 </label>
+                    </div>
+                    <input type="text" id="contents" th:field="*{scdCnts}" class="schedule_contents_box" />
+                </div>
+                <div class="schedule_etc">
+                
+                </div>
+                <div class="schedule_detail_div">
+                    <span class="schedule_text">• 체크박스 체크 시 기본 시간 설정</span>
+                </div>
+                <div class="schedule_submit_div">
+                    <input type="submit" id="submitBtn" class="schedule_btn"  onclick="makeSchedule" value="일정등록" />
+                </div>
+            </form>
+        </div>
+        <div class="close-area"><span class="material-symbols-rounded">cancel</span></div>
+    </div>
+    
+    
+    <div class="accountSpace">
+        <!--
+        <input type="hidden" id="calSeqn" th:value="${scdSeqn}">
+        <input type="hidden" id="calId" th:value="${scdId}">
+        -->
+        <div class="accountInfoSpace">
+            <div class="accountInfo"><span class="material-symbols-outlined">density_medium</span>
+                <div class="sub-account-wrap">
+                    <div class="sub-account">
+                        <div class ="user-info">
+                            <p class = "userinfo-nick" th:text="|${member.mbrNick} 님|">TEST</p>
+                        </div>
+                        <hr>
+                        <a href="#" class="sub-account-link">
+                            <span class="material-symbols-outlined">account_circle</span><p>&nbsp;&nbsp;프로필수정</p>
+                        </a>
+                        <a href="#" class="sub-account-link">
+                            <span class="material-symbols-outlined">add_ad</span><p>&nbsp;&nbsp;캘린더 추가</p>
+                        </a>
+                        <a href="#" class="sub-account-link">
+                            <span class="material-symbols-outlined">select_window</span><p>&nbsp;&nbsp;캘린더 변경</p>
+                        </a>
+                        <form th:action="@{/logout}" method="post" class="sub-account-link">
+                            <a href="javascript:;" onclick="parentNode.submit();" class="sub-account-link">
+                                <span class="material-symbols-outlined">logout</span><p>&nbsp;&nbsp;로그아웃</p>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="accountFreeNote"><span class="material-symbols-outlined">event_note</span></div>
+        </div>
+    </div>
+
+    <div class="calendarSpace" >
+        <div class ="subjectSpace">
+            <div class="subjectArrowL" onclick="beforeMonth()"><span class="material-symbols-outlined">
+                arrow_left</span></div>
+            <div class="subjectYYYYMM"><h1 class="subjectYYYYMMval"></h1></div>
+            <div class="subjectArrowR" onclick="nextMonth()"><span class="material-symbols-outlined">
+                arrow_right</span></div>
+        </div>
+
+        <p style=clear:both;></p>
+        <div class="menuSpace">
+            <div class="calendarLink">calendar link</div><div class="calendarLinkBlank"> ---공백--- </div>
+        </div>
+
+        <!--달력 메인 위치-->
+        <div id = "calendar_m" ></div>
+        <script>
+                const yyyymm = document.querySelector(".subjectYYYYMMval")
+                now = new Date();
+                let ymvalue = now.getFullYear().toString() +"."+ (now.getMonth() +1).toString();
+                let click_ym = now.getFullYear().toString()+ (now.getMonth() +1).toString().padStart(2,'0');
+                yyyymm.textContent = ymvalue;
+
+                let cal_m = document.createElement('table');
+                cal_m.setAttribute("class", "c_body_main")
+
+                const head_day = ['일','월','화','수','목','금','토']
+
+                let curYear = new Date().getFullYear();
+                let curMonth = new Date().getMonth();
+                let curDay = new Date().getDay();
+
+                const day_event_listener = (event)=>{
+                    const form = document.createElement("form");
+                    //const calSeqn = document.getElementById("calSeqn").value;
+
+                    const which_day = event.target.closest('td');
+                    console.log(which_day.value);
+
+                    var screen = document.querySelector('#modal.modal-overlay');
+                    screen.style.display = "flex";
+
+                    var modal = document.querySelector('.modal-window');
+                    modal.style.display = "flex";
+                    
+                    var close = document.querySelector('.close-area');
+                    close.style.display="flex";
+                    const closeEvent = close.addEventListener("click", e=>{
+                        modal.style.display="none";
+                        screen.style.display="none";
+                        close.style.display="none";
+                    });
+
+                    screen.addEventListener("click", e=>{
+                        const eTarget = e.target;
+                        if(eTarget.classList.contains("modal-overlay")){
+                            modal.style.display = "none";
+                            screen.style.display="none";
+                            close.style.display="none";
+                        }
+                    })
+                    
+                    function makeSchedule(){
+                        closeEvent();
+                    }
+
+                    let frdt =document.getElementById("frdt");
+                    let todt =document.getElementById("todt");
+                    let frtm =document.getElementById("frtm");
+                    let totm =document.getElementById("totm");
+                    var yyyymmdd = which_day.value;
+                    var sYear = yyyymmdd.substring(0,4);
+                    var sMonth = yyyymmdd.substring(4,6);
+                    var sDate = yyyymmdd.substring(6,8);
+
+                    frdt.value = sYear+"-"+sMonth+"-"+sDate;
+                    todt.value = sYear+"-"+sMonth+"-"+sDate;
+                    frtm.value = "08:00";
+                    totm.value = "18:00";
+                    
+                    /*popup & modal create
+                    const popW = 420;
+                    const popH = 540;
+                    const popX = (document.body.offsetWidth /2) - popW/2;
+                    const popY = (document.body.offsetHeight /2) - popH/2;
+
+                    let scdPop = window.open('schedulePop', 'calendarScheduler',
+                    'width=420, height=540, left ='+popX +',top ='+popY, 'toolbar=no,location=no, status=no, scrollbars=no');
+                    
+                    
+                    var screen = document.createElement("div");
+                    screen.setAttribute("id","modal");
+                    screen.className += " modal-overlay";
+                    screen.style.display = "flex";
+                    document.body.appendChild(screen);
+
+                    var modal = document.createElement("div");
+                    modal.setAttribute("id","modal");
+                    modal.setAttribute("class","modal-window");
+                    screen.appendChild(modal);
+                    modal.style.display="flex";
+                    
+                    var url = document.createElement("iframe");
+                    url.width="100%";
+                    url.height="100%";
+                    url.frameBorder=0;
+                    url.scrolling="No";
+                    url.src="../schedulePop";
+                    modal.appendChild(url);
+                    
+                    var close = document.createElement("div");
+                    close.setAttribute("id","modal");
+                    close.setAttribute("class","close-area");
+                    close.textContent = "X";
+                    close.style.display="flex";
+                    close.addEventListener("click", e=>{
+                        modal.style.display="none";
+                        screen.style.display="none";
+                        close.style.display="none";
+                    });
+                    
+                    
+                    modal.appendChild(close);
+                    
+                    form.setAttribute("method", "get");
+                    form.setAttribute("action", "/schedulePop");
+                    form.setAttribute("target", "calendarScheduler");
+
+                    const formD1 = document.createElement("input");
+                    formD1.setAttribute("type","hidden");
+                    formD1.setAttribute("name","calSeqn");
+                    formD1.setAttribute("value",calSeqn);
+
+                    const formD2 = document.createElement("input");
+                    formD2.setAttribute("type","hidden");
+                    formD2.setAttribute("name","calDate");
+                    formD2.setAttribute("value",which_day.value);
+
+                    form.appendChild(formD1);
+                    form.appendChild(formD2);
+                    document.body.appendChild(form);
+                    form.submit();
+                    */
+                };
+                
+                et closeBtn = document.getElementById("close-area");
+                closeBtn
+
+                let cur_firstDate = new Date(curYear, curMonth, 1);
+                let cur_firstDay = getMonthDateInfo(curYear, curMonth, 'firstday');
+                let curIdx = getMonthDateInfo(curYear, curMonth, 'curidx');
+                let cur_lastDay = getMonthDateInfo(curYear,curMonth,'lastday');
+
+                let bef_lastDay = getMonthDateInfo(curYear, curMonth-1, 'lastday')
+                let bef_lastIdx = getMonthDateInfo(curYear, curMonth-1,'week')
+
+                const getBeforeIdx = (a, b)=>{
+                    for(i = b; i>0; i--){
+                        a--;
+                    }
+                    return a;
+                }
+
+                let befIdx = getBeforeIdx(bef_lastDay, bef_lastIdx)
+                let nex_firstDate = new Date(curYear, curMonth+1, 1);
+                let nex_firstDay = getMonthDateInfo(curYear, curMonth+1, 'firstday');
+
+                function changeMonth(curYear, curMonth){
+                     cur_firstDate = new Date(curYear, curMonth, 1);
+                     cur_firstDay = getMonthDateInfo(curYear, curMonth, 'firstday');
+                     curIdx = getMonthDateInfo(curYear, curMonth, 'curidx');
+                     cur_lastDay = getMonthDateInfo(curYear,curMonth,'lastday');
+
+                     bef_lastDay = getMonthDateInfo(curYear, curMonth-1, 'lastday')
+                     bef_lastIdx = getMonthDateInfo(curYear, curMonth-1,'week')
+                     befIdx = getBeforeIdx(bef_lastDay, bef_lastIdx)
+                     nex_firstDate = new Date(curYear, curMonth+1, 1);
+                     nex_firstDay = getMonthDateInfo(curYear, curMonth+1, 'firstday');
+                }
+
+                function ymChange(ym,i){
+                    let ym_C = ym;
+                    let arrym_C = ym.slice(0,4);
+                    let arrym_C2 = ym.slice(4,6);
+                    if(i<0){
+                        if(arrym_C2 != "01"){
+                            ym_C = arrym_C + (parseInt(arrym_C2)-1).toString();
+                        }
+                        else{
+                            ym_C = (parseInt(arrym_C)-1).toString() + "12";
+                        }
+                    }
+                    else{
+                        if(arrym_C2 != "12"){
+                            ym_C = arrym_C + (parseInt(arrym_C2)+1).toString();
+                        }
+                        else{
+                            ym_C = (parseInt(arrym_C)+1).toString() + "01";
+                        }
+                    }
+
+                    return ym_C;
+                }
+
+                function beforeMonth(){
+                    const arrYM = yyyymm.textContent.split(".")
+                    if(arrYM[1]!="1"){
+                        yyyymm.textContent = arrYM[0] + "." + (parseInt(arrYM[1])-1).toString();
+
+                        const arrYM2 = yyyymm.textContent.split(".");
+                        click_ym = arrYM2[0]+arrYM[1].padStart(2,'0');
+
+                        curYear = parseInt(arrYM2[0]);
+                        curMonth = parseInt(arrYM2[1]);
+                        let tableClass = document.querySelector('.c_body_main');
+                        tableClass.remove();
+                        cal_m = document.createElement('table');
+                        cal_m.setAttribute("class", "c_body_main")
+                        changeMonth(curYear, curMonth-1);
+                        makeCalendar();
+                    }
+                    else
+                    {
+                        yyyymm.textContent = (parseInt(arrYM[0])-1).toString() + "." + "12";
+                        const arrYM2 = yyyymm.textContent.split(".");
+                        click_ym = arrYM2[0]+arrYM[1].padStart(2,'0');
+
+                        curYear = parseInt(arrYM2[0]);
+                        curMonth = parseInt(arrYM2[1]);
+                        let tableClass = document.querySelector('.c_body_main');
+                        tableClass.remove();
+                        cal_m = document.createElement('table');
+                        cal_m.setAttribute("class", "c_body_main")
+                        changeMonth(curYear, curMonth-1);
+                        makeCalendar();
+                    }
+                }
+
+                function nextMonth(){
+                    let arrYM = yyyymm.textContent.split(".")
+                    if(arrYM[1]!="12"){
+                        yyyymm.textContent = arrYM[0] + "." + (parseInt(arrYM[1])+1).toString();
+                        const arrYM2 = yyyymm.textContent.split(".");
+                        click_ym = arrYM2[0]+arrYM[1].padStart(2,'0');
+
+                        curYear = parseInt(arrYM2[0]);
+                        curMonth = parseInt(arrYM2[1]);
+                        let tableClass = document.querySelector('.c_body_main');
+                        tableClass.remove();
+                        cal_m = document.createElement('table');
+                        cal_m.setAttribute("class", "c_body_main")
+                        changeMonth(curYear, curMonth-1);
+                        makeCalendar();
+                    }
+                    else
+                    {
+                        yyyymm.textContent = (parseInt(arrYM[0])+1).toString() + "." + "1";
+                        const arrYM2 = yyyymm.textContent.split(".");
+                        click_ym = arrYM2[0]+arrYM[1].padStart(2,'0');
+
+                        curYear = parseInt(arrYM2[0]);
+                        curMonth = parseInt(arrYM2[1]);
+                        let tableClass = document.querySelector('.c_body_main');
+                        tableClass.remove();
+                        cal_m = document.createElement('table');
+                        cal_m.setAttribute("class", "c_body_main")
+                        changeMonth(curYear, curMonth-1);
+                        makeCalendar();
+                    }
+                }
+
+                function getMonthDateInfo(year, month, info){
+                    switch(info){
+                        case 'firstday':
+                            return (new Date(year, month, 1)).getDate();
+                        case 'curidx':
+                            return "col0"+(new Date(year, month, 1)).getDay().toString();
+                        case 'lastday':
+                            return (new Date(year, month+1, 0)).getDate();
+                        case 'week':
+                            return (new Date(year, month+1, 0)).getDay();
+                    }
+                }
+
+                    function makeCalendar(){
+                            let cal_m_body = document.querySelector('#calendar_m');
+                            //cal_m_body.setAttribute("class","c_body")
+
+                            // 달력 너비 설정
+                            const colg = document.createElement('colgroup');
+
+                            for(let c =0; c<7; c++){
+                                const col = document.createElement('col')
+                                col.setAttribute("class", "c_body_col")
+                                colg.append(col);
+                            }
+
+                            cal_m.append(colg);
+
+
+                            // 달력 요일 - header값
+                            for(let a = 0; a<1; a++){
+                                const h_tr = document.createElement('tr');
+                                for(let b = 0; b<7; b++){
+                                    const cal_m_head = document.createElement('th');
+                                    cal_m_head.setAttribute("class","c_body_cell")
+
+                                    cal_m_head.innerHTML = head_day[b];
+                                    h_tr.append(cal_m_head);
+                                }
+                                cal_m.append(h_tr);
+                            }
+                            cal_m_body.append(cal_m);
+
+                            // 달력 일자 - 해당 월의 일자 동적으로 가져옴
+                            let fdChk = false;
+                            let fd = cur_firstDay;
+                            let nfd = nex_firstDay;
+                            let bld = befIdx;
+                            for(let i = 0; i<6; i++){
+                                const c_tr = document.createElement('tr');
+                                for(let j = 0; j<7; j++){
+                                    const c_td = document.createElement('td');
+                                    const c_td_div = document.createElement('div');
+                                    c_td_div.appendChild(c_td);
+                                    c_td.setAttribute("id", `col${i}${j}`)
+
+                                    c_td.setAttribute("class","c_body_cell")
+                                    if(bld <= bef_lastDay){
+                                        c_td.className += " othercell";
+                                        c_td.innerHTML = bld++;
+                                        c_td.value = ymChange(click_ym,-1)+c_td.innerHTML.padStart(2,'0');
+                                    }
+                                    if(`col${i}${j}`===curIdx){
+                                        fdChk = true;
+                                        c_td.textContent=fd;
+                                        c_td.value = click_ym+fd.toString().padStart(2,'0');
+                                    }
+                                    if(`col${i}${j}`!=curIdx &&fdChk){
+                                        if(++fd <= cur_lastDay){
+                                            c_td.innerHTML = fd;
+                                            c_td.value = click_ym +fd.toString().padStart(2,'0');
+                                        }
+                                        else{
+                                            c_td.className += " othercell";
+                                            c_td.innerHTML =nfd++;
+                                            c_td.value = ymChange(click_ym,1)+c_td.innerHTML.toString().padStart(2,'0');
+                                        }
+                                    }
+
+                                    c_tr.append(c_td);
+                                }
+                                cal_m.append(c_tr);
+                            }
+
+                            cal_m_body.append(cal_m)
+                        }
+                        cal_m.addEventListener('click',day_event_listener);
+                        makeCalendar();
+                    </script>
+
+        <!--프리노트 위치-->
+        <div  style="float:left; display:none; width:25%">free note</div>
+
+
+        <div></div>
+    </div>
+</div>
+
+</body>
+</html>

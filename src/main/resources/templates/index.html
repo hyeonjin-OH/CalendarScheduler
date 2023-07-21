@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="/css/basic.css" />
+    
+    <title>Calendar</title>
+</head>
+<body>
+<div class="fullScreen">
+    <div class="accountSpace">
+        <div class="accountInfoSpace">
+            <div class="accountSignin" th:onclick="|location.href='@{/join}'|"> <a class="txtSignin"> SIGN IN</a></div>
+            <div class="accountLogin" th:onclick="|location.href='@{/login}'|">  <a class="txtLogin">LOGIN</a> </div>
+
+        </div>
+    </div>
+
+    <div class="loginSpace">
+        <div class="loginFormSpace">
+
+            <hr class = "line">
+
+            <H1> Scheduler Project </H1>
+            <h1> </h1>
+            <div class="project-div">
+                <h2>FrameWork</h2>
+            <p class="project-text"> Spring Boot, Thymeleaf, MariaDB </p>
+                <h2>Open API</h2>
+            <p class="project-text"> Fullcalendar</p>
+                <h2>Function</h2>
+                <p class="project-text"> Login, Logout, Register, Schedule CRUD </p>
+                <br>
+            <p class="project-text"> by. Oh Hyeonjin </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
