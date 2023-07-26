@@ -112,7 +112,7 @@
             }
         </style>
 </head>
-<body>
+<body class="body-no-margin">
 <div class="fullScreen">
   <div class="accountSpace">
     <div class="accountInfoSpace">
@@ -131,8 +131,7 @@
                    placeholder="아이디" th:errorclass="field-error" pattern="^([a-z0-9_]){6,18}$"
                    required />
             <input type="hidden" id="idDupChk" value="N">
-            <button type="button" onclick="return false;" id="btnChkId" class="signFormBox-id-button">중복확인</button>
-            <div class="field-error" th:errors="*{mbrId}" />
+            <button type="button" id="btnChkId" class="signFormBox-id-button">중복확인</button>
           </div>
 
           <div>
@@ -233,7 +232,7 @@
                  },error : function(req,status,err){
                      console.log(req);
                  }
-              });
+               });
             });
           });
 
@@ -286,12 +285,16 @@
           function selectedInvite(){
             var selected = document.querySelector("#calendarType");
             var inputBox = document.querySelector(".hidden-box");
+            var colorType = document.querySelector("#calendarColor");
 
             if(selected.options[selected.selectedIndex].value == "invite"){  
               inputBox.style.display="block";
+              colorType.disabled= true;
+              
             }
             else{
               inputBox.style.display="none";
+              colorType.disabled = false;
             }
           }
           
@@ -302,10 +305,12 @@
 
           <div class="join-rule-div">
             <!--<span class="material-symbols-outlined">check_circle</span>-->
-            <span class="join-rule">• 아이디 : 영문숫자 혼용 6~18자리</span>
+            <span class="join-rule">• 아이디 : 영어소문자.숫자 혼용 6~18자리</span>
             <br>
             <!--<span class="material-symbols-outlined">check_circle</span>-->
             <span class="join-rule">• 비밀번호 : 영문숫자특수문자 혼용 8~20자리</span>
+            <br>
+            <span class="join-rule">• 전항목 기입해주시기 바랍니다.</span>
           </div>
 
           <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">

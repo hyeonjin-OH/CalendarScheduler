@@ -32,6 +32,7 @@ public class LoginController {
     public String login(@Valid @ModelAttribute("loginForm") LoginForm form, BindingResult bindingResult,
                         HttpServletRequest request){
         if(bindingResult.hasErrors()) {
+            bindingResult.reject("notnull", "기입하지 않은 정보가 있습니다.");
             return "view/login/loginForm";
         }
 
@@ -48,7 +49,7 @@ public class LoginController {
         //세션에 로그인 회원 정보 보관
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
 
-        return "redirect:/Calendar"; //+ redirectURL;
+        return "redirect:/Calendar";
     }
 
     @PostMapping("/logout")

@@ -27,7 +27,7 @@ public class categoryController {
         CalCategory calCategory = new CalCategory();
         calCategory.setCtgrCode(member.getMbrCtgr());
         calCategory.setCtgrId(member.getMbrId());
-        calCategory.setCtgrSeqn(Long.parseLong(member.getMbrSeqn()));
+        calCategory.setCtgrSeqn(member.getMbrSeqn());
         calCategory.setCtgrCrdt(DateTimeFormatter.ofPattern("yyyyMMdd").format(member.getMbrRgdt()));
         calCategory.setCtgrColr(member.getMbrColr());
         calCategory.setCtgrRgdt(member.getMbrRgdt());
@@ -40,7 +40,7 @@ public class categoryController {
     @RequestMapping(value = "/addCtgr" )
     public String register(@ModelAttribute("member") Member member){
 
-        Long ctgrSeqn = Long.parseLong(member.getMbrSeqn());
+        Long ctgrSeqn =member.getMbrSeqn();
         Optional<CalCategory> ctgr = categoryRepository.findByCtgrSeqn(ctgrSeqn).stream().findFirst();
         String code = ctgr.get().getCtgrCode();
 
@@ -49,7 +49,7 @@ public class categoryController {
         calCategory.setCtgrRgdt(nowT);
         calCategory.setCtgrId(member.getMbrId());
         calCategory.setCtgrCode(code);
-        calCategory.setCtgrSeqn(Long.parseLong(member.getMbrSeqn()));
+        calCategory.setCtgrSeqn(member.getMbrSeqn());
         calCategory.setCtgrCrdt(DateTimeFormatter.ofPattern("yyyyMMdd").format(nowT));
         calCategory.setCtgrColr(member.getMbrColr());
         calCategory.setCtgrFlag('Y');

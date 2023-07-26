@@ -42,11 +42,16 @@ public class MCalendarController {
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
         HttpSession session = request.getSession();
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
-
+/*
         String mbrId = m.getMbrId();
-        String mbrSeqn = m.getMbrSeqn();
 
-        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, Long.parseLong(mbrSeqn));
+        // 프로필 수정 및 캘린더 추가 후 다시 조회할 수도 있기 때문에 id 기반으로 멤버정보 재조회
+        m = memberRepository.findByMbrId(mbrId).get();
+
+        Optional<Member> mbrSeqn = memberRepository.findSeqn(mbrId);
+        Long seqn = Long.parseLong(mbrSeqn.get().getMbrSeqn());
+*/
+        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(m.getMbrId(),m.getMbrSeqn());
         CalCategory ctgrInfo = mbrCtgr.get();
 
         Long ctgSeqn = ctgrInfo.getCtgrSeqn();
@@ -59,7 +64,7 @@ public class MCalendarController {
         model.addAttribute("schedules",schedule);
 
         scd.setScdSeqn(ctgSeqn);
-        scd.setScdId(mbrId);
+        scd.setScdId(m.getMbrId());
         scd.setScdColr(ctgColr);
 
         //return "view/calendar/monthCalendar";
@@ -75,9 +80,9 @@ public class MCalendarController {
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         String mbrId = m.getMbrId();
-        String mbrSeqn = m.getMbrSeqn();
+        Optional<Member> mbrSeqn = memberRepository.findSeqn(mbrId);
 
-        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, Long.parseLong(mbrSeqn));
+        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId,mbrSeqn.get().getMbrSeqn());
 
         CalCategory ctgrInfo = mbrCtgr.get();
 
@@ -122,33 +127,90 @@ public class MCalendarController {
 
         model.addAttribute("member",m);
 
-        return "/view/calendar/changeCalendar";
+        return "/view/calendar/addCalendar";
     }
     @PostMapping("/add")
-    public String calendarAddPost(@ModelAttribute("member") Member member, HttpServletRequest request, Model model){
-        //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
-        HttpSession session = request.getSession();
-        Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+    public String calendarAddPost(@ModelAttribute("member") Member member, Model model, HttpServletRequest request){
 
-        Long ctgrSeqn = Long.parseLong(member.getMbrSeqn());
-        Optional<CalCategory> ctgr = categoryRepository.findByCtgrSeqn(ctgrSeqn).stream().findFirst();
-        String code = ctgr.get().getCtgrCode();
-
+        Long ctgrSeqn = 0L;
+        String code = "";
         CalCategory calCategory = new CalCategory();
         LocalDateTime nowT = LocalDateTime.now();
+        Long seq = 0L;
+
+        if(member.getMbrSeqn() != null){
+            ctgrSeqn=member.getMbrSeqn();
+            Optional<CalCategory> ctgr = categoryRepository.findByCtgrSeqn(ctgrSeqn).stream().findFirst();
+            code = ctgr.get().getCtgrCode();
+        }
+        else{
+            ctgrSeqn = Long.parseLong(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++seq).toString());
+            code = member.getMbrCtgr();
+        }
+
         calCategory.setCtgrRgdt(nowT);
         calCategory.setCtgrId(member.getMbrId());
         calCategory.setCtgrCode(code);
-        calCategory.setCtgrSeqn(Long.parseLong(member.getMbrSeqn()));
+        calCategory.setCtgrSeqn(ctgrSeqn);
         calCategory.setCtgrCrdt(DateTimeFormatter.ofPattern("yyyyMMdd").format(nowT));
         calCategory.setCtgrColr(member.getMbrColr());
         calCategory.setCtgrFlag('Y');
 
         categoryRepository.save(calCategory);
-        memberRepository.updateSeqn(member);
+        memberRepository.updateSeqn(member.getMbrId(), member.getMbrSeqn());
+
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionConst.LOGIN_MEMBER, member);
+
+        model.addAttribute("member",member);
+
+        return "redirect:/Calendar";
+    }
+
+    @GetMapping("/change")
+    public String calendarChange(Model model, HttpServletRequest request){
+        //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
+        HttpSession session = request.getSession();
+        Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        List<CalCategory> calCategory = categoryRepository.findByCtgrId(m.getMbrId());
 
         model.addAttribute("member",m);
+        model.addAttribute("categories",calCategory);
 
-        return "redirect:/Calenedar";
+        return "/view/calendar/changeCalendar";
+    }
+
+    @PostMapping("/change")
+    public String calendarChangePost(@ModelAttribute("mbrId")String id, @ModelAttribute("mbrSeqn")String seqn
+                                    , HttpServletRequest request){
+
+        Integer res =  memberRepository.updateSeqn(id, Long.parseLong(seqn));
+
+        Member member = memberRepository.findByMbrId(id).get();
+
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionConst.LOGIN_MEMBER, member);
+        if(res == 1){
+            return "true";
+        }
+        else{
+            return "false";
+        }
+    }
+
+    @PostMapping("/delete")
+    public String calendarDelete(@RequestParam("ctgrId")String id, @RequestParam("ctgrSeqn")String seqn){
+
+        LocalDateTime nowT = LocalDateTime.now();
+
+        Integer res = categoryRepository.deleteByCtgrSeqn(id, Long.parseLong(seqn), nowT);
+
+        if(res == 1){
+            return "true";
+        }
+        else{
+            return "false";
+        }
     }
 }

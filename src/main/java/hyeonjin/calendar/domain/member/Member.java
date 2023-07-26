@@ -40,9 +40,11 @@ public class Member {
     @NotEmpty
     private String mbrId;
     private String mbrNick;
+    @NotEmpty
     private String mbrPwd;
+    @NotEmpty
     private String mbrEmail;
-    private String mbrSeqn;
+    private Long mbrSeqn;
 
 
     @Transient

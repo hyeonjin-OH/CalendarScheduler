@@ -20,7 +20,7 @@ public class HomeController {
 
 
     @GetMapping("/")
-    public String homeLoginV3ArgumentResolver(@Login Member loginMember, Model model){
+    public String homeLoginArgumentResolver(@Login Member loginMember, Model model){
 
         //세션에 회원 데이터가 없으면
         if(loginMember == null){

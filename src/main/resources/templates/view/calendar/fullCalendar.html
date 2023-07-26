@@ -25,7 +25,7 @@
   <script type="text/javascript" src="/js/calendar.js" defer></script>
 
 </head>
-<body>
+<body class="body-no-margin">
 <div class="fullScreen">
   <div id="modal" class="fullScreen modal-overlay" >
     <div  class="modal-window" >
@@ -76,7 +76,8 @@
           <div class="schedule_text_div">
             <label for="subject" class="schedule_text">일정내용 </label>
           </div>
-          <input type="text" id="contents" th:field="*{scdCnts}" class="schedule_contents_box" />
+          <textarea  id="contents" th:field="*{scdCnts}" class="schedule_contents_box"></textarea>
+<!--          <input type="text" id="contents" th:field="*{scdCnts}" class="schedule_contents_box" />-->
         </div>
         <div class="schedule_etc">
         
@@ -138,13 +139,14 @@
           <div class="schedule_text_div">
             <label for="subject" class="schedule_text">일정내용 </label>
           </div>
-          <input type="text" id="contents_update" th:field="*{scdCnts}" class="schedule_contents_box" />
+          <textarea  id="contents_update" th:field="*{scdCnts}" class="schedule_contents_box"></textarea>
+<!--          <input type="text" id="contents_update" th:field="*{scdCnts}" class="schedule_contents_box" />-->
         </div>
         <div class="schedule_etc">
         
         </div>
         <div class="schedule_detail_div">
-          <span class="schedule_text">• 체크박스 체크 시 기본 시간 설정</span>
+          <span class="schedule_text">• 체크박스 체크 시 종일 시간으로 설정</span>
         </div>
         <div class="schedule_submit_div">
             <button type="submit" id = "submitEdit" class="schedule_btn_edit">일정수정</button>
@@ -158,6 +160,7 @@
   <div class="accountSpace">
     <input type="hidden" id="calSeqn" th:value="${scdSeqn}">
     <input type="hidden" id="calColr" th:value="${scdColr}">
+    <div class ="account-logo" th:onclick="|location.href='@{/Calendar}'|"><img src="/images/cal.png"></div>
     <div class="accountInfoSpace">
       <div class="accountInfo"><span class="material-symbols-outlined">density_medium</span>
         <div class="sub-account-wrap">
@@ -173,7 +176,7 @@
             <a th:onclick="|location.href='@{/Calendar/add}'|" class="sub-account-link">
               <span class="material-symbols-outlined">add_ad</span><p>&nbsp;&nbsp;캘린더 추가</p>
             </a>
-            <a href="#" class="sub-account-link">
+            <a th:onclick="|location.href='@{/Calendar/change}'|" class="sub-account-link">
               <span class="material-symbols-outlined">select_window</span><p>&nbsp;&nbsp;캘린더 변경</p>
             </a>
             <form th:action="@{/logout}" method="post" class="sub-account-link">

@@ -38,8 +38,8 @@ public class MemberRepository {
         //try catch작업
             CalCategory calCategory = new CalCategory();
             LocalDateTime nowT = LocalDateTime.now();
-            if(member.getMbrSeqn()== ""){
-                member.setMbrSeqn(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++seq).toString());
+            if(member.getMbrSeqn()== null){
+                member.setMbrSeqn(Long.parseLong(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++seq).toString()));
             }
             member.setMbrRgdt(nowT);
             em.persist(member);
@@ -86,15 +86,14 @@ public class MemberRepository {
     }
 
     @Modifying
-    @Transactional
-    public Integer updateSeqn(Member member){
+    @Transactional(rollbackOn = {SQLException.class})
+    public Integer updateSeqn(String id, Long seqn){
         LocalDateTime nowT = LocalDateTime.now();
 
-        return em.createQuery("update memberinfo m set m.mbrUpdt=:updt, m.mbrSeqn=:seqn where m.mbrId=:id and m.mbrEmail=:email")
+        return em.createQuery("update memberinfo m set m.mbrUpdt=:updt, m.mbrSeqn=:seqn where m.mbrId=:id")
                 .setParameter("updt", nowT)
-                .setParameter("id", member.getMbrId())
-                .setParameter("seqn", member.getMbrSeqn())
-                .setParameter("email", member.getMbrEmail())
+                .setParameter("id", id)
+                .setParameter("seqn", seqn)
                 .executeUpdate();
 
     }
@@ -123,6 +122,11 @@ public class MemberRepository {
                 .getResultList().stream().findAny();
     }
 
+    public Optional<Member> findSeqn(String loginid){
+        return em.createQuery("select c from memberinfo c where c.mbrId = :loginid", Member.class)
+                .setParameter("loginid", loginid)
+                .getResultList().stream().findAny();
+    }
     public List<Member> findAll(){
 
         return null;

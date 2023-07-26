@@ -38,9 +38,9 @@ public class ScheduleController {
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         String mbrId = m.getMbrId();
-        String mbrSeqn = m.getMbrSeqn();
+        Long mbrSeqn = m.getMbrSeqn();
 
-        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, Long.parseLong(mbrSeqn));
+        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, mbrSeqn);
         CalCategory ctgrInfo = mbrCtgr.get();
 
         Long ctgSeqn = ctgrInfo.getCtgrSeqn();
@@ -74,9 +74,9 @@ public class ScheduleController {
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         String mbrId = m.getMbrId();
-        String mbrSeqn = m.getMbrSeqn();
+        Long mbrSeqn = m.getMbrSeqn();
 
-        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, Long.parseLong(mbrSeqn));
+        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, mbrSeqn);
         CalCategory ctgrInfo = mbrCtgr.get();
 
         Long ctgSeqn = ctgrInfo.getCtgrSeqn();
@@ -110,9 +110,9 @@ public class ScheduleController {
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         String mbrId = m.getMbrId();
-        String mbrSeqn = m.getMbrSeqn();
+        Long mbrSeqn = m.getMbrSeqn();
 
-        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, Long.parseLong(mbrSeqn));
+        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, mbrSeqn);
         CalCategory ctgrInfo = mbrCtgr.get();
 
         Long ctgSeqn = ctgrInfo.getCtgrSeqn();

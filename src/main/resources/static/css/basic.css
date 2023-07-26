@@ -21,6 +21,16 @@
                 height: 100%;
                 text-align: center;
             }
+            .account-logo{
+                box-sizing: border-box;
+                float:left;
+                height:100%;
+                cursor:pointer;
+            }
+            img{
+                object-fit:cover;
+                height:100%;
+            }
             .accountInfoSpace{
                 box-sizing: border-box;
                 float:right;
@@ -163,4 +173,7 @@
                 height:20px;
                 background-color: transparent;
 
+            }
+            .body-no-margin{
+                margin : 0;
             }

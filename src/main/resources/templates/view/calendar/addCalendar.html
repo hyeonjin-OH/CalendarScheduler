@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
 <link rel="stylesheet" type="text/css" href="/css/basic.css" />
-
+<link rel="stylesheet" type="text/css" href="/css/calendar.css" />
+<script type="text/javascript" src="/js/addCalendar.js" defer></script>
 <head>
   <meta charset="utf8">
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
@@ -110,85 +109,79 @@
   <div class="accountSpace">
     <div class ="account-logo" th:onclick="|location.href='@{/Calendar}'|"><img src="/images/cal.png"></div>
     <div class="accountInfoSpace">
-      <!-- <div class="accountSignin"> <a class="txtSignin">SIGN IN</a></div> -->
-      <div class="accountLogin" th:onclick="|location.href='@{/login}'|"> <a class="txtLogin">LOG IN</a> </div>
+      <div class="accountInfo"><span class="material-symbols-outlined">density_medium</span>
+        <div class="sub-account-wrap">
+          <div class="sub-account">
+            <div class ="user-info">
+              <p class = "userinfo-nick" th:text="|${member.mbrNick} 님|">TEST</p>
+              <input type="hidden" id="loginMbrId" th:value="${member.mbrId}"/>
+            </div>
+            <hr>
+            <a th:onclick="|location.href='@{/update}'|" class="sub-account-link">
+              <span class="material-symbols-outlined">account_circle</span><p>&nbsp;&nbsp;프로필수정</p>
+            </a>
+            <a href="#" class="sub-account-link">
+              <span class="material-symbols-outlined">add_ad</span><p>&nbsp;&nbsp;캘린더 추가</p>
+            </a>
+            <a href="#" class="sub-account-link">
+              <span class="material-symbols-outlined">select_window</span><p>&nbsp;&nbsp;캘린더 변경</p>
+            </a>
+            <form th:action="@{/logout}" method="post" class="sub-account-link">
+              <a href="javascript:;" onclick="parentNode.submit();" class="sub-account-link">
+                <span class="material-symbols-outlined">logout</span><p>&nbsp;&nbsp;로그아웃</p>
+              </a>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  
+
   <div class="signSpace">
     <div class="signFormSpace">
       <div class="signForm">
-        <h1> 회 원 정 보 </h1>
+        <h1> 캘린더 추가 </h1>
         <form th:action th:object="${member}" method="post">
           <input type="hidden" th:field="*{Id}" th:value="*{Id}"/>
           <div>
             <input type="text" id="loginId" th:field="*{mbrId}" class="signFormBox" style="background-color:#c0c0c0"
                    placeholder="아이디" th:value="*{mbrId}" readonly/>
           </div>
-          
           <div>
-            <input type="password" id="password" th:field="*{mbrPwd}" class="signFormBoxTopMargin"
-                   placeholder="비밀번호변경" th:errorclass="field-error" pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_-+=[]{}~?:;`|/]).{8,20}$"
-                   />
-            <div class="field-error" th:errors="*{mbrPwd}" />
-            <input type="password" id="password2" class="signFormBoxBotMargin" onkeyup="validatePwd()"
-                   placeholder="비밀번호변경확인" pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_-+=[]{}~?:;`|/]).{6,20}$" />
-            <div class="field-error" th:errors="*{mbrPwd}" />
+            <select id="calendarType"  class="signFormBox" th:field="*{mbrCtgr}" onchange="selectedInvite()">
+              <option value="none" selected hidden>=== 생성할 캘린더 종류 선택 ===</option>
+              <option value="friend">친구</option>
+              <option value="personal">개인</option>
+              <option value="family">가족</option>
+              <option value="company">회사</option>
+              <option value="invite">초대코드로 생성</option>
+            </select>
+          </div>
+          <div class="hidden-box">
+            <input type="text" id="inviteCode" class="signFormBox-id" th:field="*{mbrSeqn}" value="" placeholder="초대코드">
+            <button type="button" onclick="return false;" id="btnChkInvite" class="signFormBox-id-button">코드확인</button>
           </div>
           <div>
-            <input type="text" id="nick" th:field="*{mbrNick}" class="signFormBoxTopMargin" th:value="*{mbrNick}"
-                   placeholder="별칭" title="별칭"/>
+            <select id="calendarColor"  class="signFormBox" th:field="*{mbrColr}" disabled>
+              <option value="none" selected hidden>=== 캘린더 표기 색상 ===</option>
+              <option value="green">초록</option>
+              <option value="skyblue">파랑</option>
+              <option value="palevioletred">분홍</option>
+              <option value="purple">보라</option>
+              <option value="gray">회색</option>
+            </select>
           </div>
-          <div>
-            <input type="email" id="email" th:field="*{mbrEmail}" class="signFormBoxBotMargin" th:value="*{mbrEmail}" title="이메일"
-                   placeholder="이메일" th:errorclass="field-error" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-            <div class="field-error" th:errors="*{mbrEmail}" />
-          </div>
-          
-          <input type="submit"  id="submitSign" class="signBtn" value="정보수정">
-          <script>
-          let loginid = document.getElementById("loginId");
-          const saveid = $("#loginId").val();
-          
-          const pwd = document.getElementById("password");
-          let pwd2= document.getElementById("password2");
-          let txtRes = document.getElementById("txtRes");
+          <input type="submit" onclick ="chkForm" id="submitSign" class="signBtn" value="캘린더추가">
 
-          function validatePwd(){
-          if(pwd.value != pwd2.value){
-               pwd2.setCustomValidity("비밀번호가 일치하지 않습니다.");
-               if($("#idDupChk").val() == 'N'){
-                $("#txtRes").text("중복 아이디입니다.\n비밀번호가 일치하지 않습니다.");
-               }
-               else{
-               $("#txtRes").text("비밀번호가 일치하지 않습니다.").css("color","red");
-               }
-               pwd2.className +=" field-error";
-          }
-          else{
-               pwd2.setCustomValidity("");
-               if($("#idDupChk").val() == 'N'){
-                $("#txtRes").text("중복 아이디입니다.").css("color","red");
-               }
-               else{
-                $("#txtRes").text("");
-               }
-               pwd2.className ="signFormBoxBotMargin";
-            }
-          }
-          pwd2.keyup= validatePwd;
-          
-           </script>
-          
           <hr class = "line">
           <p id ="txtRes">  </p>
-          
-          <div cl에ass="join-rule-div">
-            <span class="join-rule">• 비밀번호 : 영문숫자특수문자 혼용 8~20자리</span>
+
+          <div class="join-rule-div">
+            <span class="join-rule">• 캘린더 추가 시 추가한 캘린더가 기본 캘린더로 설정됩니다.</span>
             <br>
-            <span class="join-rule">• 비밀번호를 변경하지 않으실거라면 공란으로 두시면 됩니다.</span>
+            <span class="join-rule">• 기본 캘린더를 변경하고 싶다면 캘린더 변경에서 작업하시면 됩니다.</span>
           </div>
-          
+
           <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
                th:text="${err}">전체 오류 메시지</p> </div>

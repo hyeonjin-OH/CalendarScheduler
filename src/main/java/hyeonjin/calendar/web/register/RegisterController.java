@@ -34,14 +34,20 @@ public class RegisterController {
     public String register(@Valid @ModelAttribute("member")Member member, BindingResult bindingResult,
                            HttpServletRequest request){
 
-        if (!Pattern.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$", member.getMbrPwd())) {
-            bindingResult.rejectValue("mbrPwd", "required");
-            //bindingResult.reject("pwdFail");
+        if (!Pattern.matches("^(?=.*[a-z])(?=.*\\d)[a-z\\d]{6,18}$", member.getMbrId())) {
+            bindingResult.rejectValue("mbrId", "required");
         }
 
+        if (!Pattern.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$", member.getMbrPwd())) {
+            bindingResult.rejectValue("mbrPwd", "required");
+        }
+        if(!Pattern.matches("^([a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+)*$", member.getMbrEmail())){
+            bindingResult.rejectValue("mbrEmail", "required");
+        }
         if(bindingResult.hasErrors()) {
             return "view/login/joinForm";
         }
+
         Member joinMember = memberRepository.save(member);
 
         if(joinMember == null){
@@ -66,7 +72,7 @@ public class RegisterController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(@Valid @ModelAttribute("member")Member member, BindingResult bindingResult,
+    public String updateProfile(@ModelAttribute("member")Member member, BindingResult bindingResult,
                            HttpServletRequest request){
         if(bindingResult.hasErrors()) {
             return "view/login/updateForm";
@@ -79,6 +85,10 @@ public class RegisterController {
 
             return "view/login/updateForm";
         }
+
+        //업데이트 후 바뀐 멤버 정보 세션에 담기
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionConst.LOGIN_MEMBER, member);
 
         return "redirect:/Calendar";
     }

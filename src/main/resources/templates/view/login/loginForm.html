@@ -8,11 +8,11 @@
     
     <title>Calendar</title>
 </head>
-<body>
+<body class="body-no-margin">
 <div class="fullScreen">
     <div class="accountSpace">
         <div class="accountInfoSpace">
-            <div class="accountSignin" th:onclick="|location.href='@{/join}'|"> <a class="txtSignin">SIGN IN</a></div>
+            <div class="accountSignin" th:onclick="|location.href='@{/join}'|"> <a class="txtSignin">SIGN UP</a></div>
             <div class="accountLogin" th:onclick="|location.href='@{/login}'|"> <a class="txtLogin">LOGIN</a> </div>
 
         </div>
@@ -26,12 +26,12 @@
                     <div>
                         <input type="text" id="loginId" th:field="*{loginId}" class="loginFormBox" placeholder="아이디"
                                th:errorclass="field-error">
-                        <div class="field-error" th:errors="*{loginId}" />
+<!--                        <div class="field-error" th:errors="*{loginId}" />-->
                     </div>
                     <div>
                         <input type="password" id="password" th:field="*{password}" class="loginFormBox" placeholder="비밀번호"
                                th:errorclass="field-error">
-                        <div class="field-error" th:errors="*{password}" />
+<!--                        <div class="field-error" th:errors="*{password}" />-->
                     </div>
                     <input type="submit" class="loginBtn" value="로그인">
         
