@@ -32,6 +32,8 @@ public class Schedule {
     private String scdTotm;
     private Long scdWkno;
     private String scdCnts;
+
+    @Transient
     private String scdColr;
 
     private String scdFlag;

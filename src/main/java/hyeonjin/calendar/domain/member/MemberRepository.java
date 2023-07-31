@@ -32,9 +32,9 @@ public class MemberRepository {
         this.ctgrController = ctgrController;
     }
 
-
     @Transactional(rollbackOn = {SQLException.class})
     public Member save(Member member){
+        seq = findMaxMember();
         //try catch작업
             CalCategory calCategory = new CalCategory();
             LocalDateTime nowT = LocalDateTime.now();
@@ -122,10 +122,28 @@ public class MemberRepository {
                 .getResultList().stream().findAny();
     }
 
+    public Optional<Member> findByMbrEmail(String mbremail){
+        return em.createQuery("select c from memberinfo c where c.mbrEmail =:email", Member.class)
+                .setParameter("email", mbremail)
+                .getResultList().stream().findAny();
+    }
+
+    public Optional<Member> findSocialMember(String mbremail){
+        return em.createQuery("select c from memberinfo c where c.mbrEmail =:email and c.mbrId LIKE :id", Member.class)
+                .setParameter("email", mbremail)
+                .setParameter("id", "social%")
+                .getResultList().stream().findAny();
+    }
+
     public Optional<Member> findSeqn(String loginid){
         return em.createQuery("select c from memberinfo c where c.mbrId = :loginid", Member.class)
                 .setParameter("loginid", loginid)
                 .getResultList().stream().findAny();
+    }
+
+    public Long findMaxMember(){
+        return em.createQuery("select count(c) from memberinfo c", Long.class)
+                .getSingleResult();
     }
     public List<Member> findAll(){
 

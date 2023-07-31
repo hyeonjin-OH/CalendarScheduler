@@ -1,6 +1,7 @@
 package hyeonjin.calendar.domain.category;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity(name="categoryinfo")    //createquery에 쓰일 이름
 @Table(name="categoryinfo")
+@Builder
 public class CalCategory {
 
     public CalCategory(){

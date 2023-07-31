@@ -156,11 +156,12 @@
     </div>
     <div  class="close-area"><span class="material-symbols-rounded">cancel</span></div>
   </div>
-  
   <div class="accountSpace">
     <input type="hidden" id="calSeqn" th:value="${scdSeqn}">
     <input type="hidden" id="calColr" th:value="${scdColr}">
-    <div class ="account-logo" th:onclick="|location.href='@{/Calendar}'|"><img src="/images/cal.png"></div>
+    <div class ="account-logo" th:onclick="|location.href='@{/Calendar}'|">
+      <img src="/images/cal.png">
+    </div>
     <div class="accountInfoSpace">
       <div class="accountInfo"><span class="material-symbols-outlined">density_medium</span>
         <div class="sub-account-wrap">
@@ -190,7 +191,6 @@
       <div class="accountFreeNote"><span class="material-symbols-outlined">event_note</span></div>
     </div>
   </div>
-  
   <div id="calendarBox">
     <div id="calendar"></div>
   </div>

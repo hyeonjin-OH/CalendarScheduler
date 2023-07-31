@@ -2,7 +2,9 @@ package hyeonjin.calendar.domain.member;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.Builder;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -13,6 +15,34 @@ public class Member {
     public Member(){
 
     }
+
+    @Builder(builderMethodName = "loginMember", builderClassName = "loginMember")
+    public Member(Long id, String mbrId, String mbrNick, String mbrEmail, Long mbrSeqn,
+                 String mbrCtgr, String mbrColr) {
+        this.id = id;
+        this.mbrId = mbrId;
+        this.mbrNick = mbrNick;
+        this.mbrEmail = mbrEmail;
+        this.mbrSeqn = mbrSeqn;
+        this.mbrCtgr = mbrCtgr;
+        this.mbrColr = mbrColr;
+    }
+
+    @Builder(builderMethodName = "socialMember", builderClassName = "socialMember")
+    public Member(Long id, String mbrId, String mbrNick, String mbrEmail, Long mbrSeqn,
+                  String mbrAccesstoken, String mbrRefreshtoken, String mbrSocialserver, String mbrCtgr, String mbrColr) {
+        this.id = id;
+        this.mbrId = mbrId;
+        this.mbrNick = mbrNick;
+        this.mbrEmail = mbrEmail;
+        this.mbrSeqn = mbrSeqn;
+        this.mbrAccesstoken = mbrAccesstoken;
+        this.mbrRefreshtoken = mbrRefreshtoken;
+        this.mbrSocialserver = mbrSocialserver;
+        this.mbrCtgr = "personal";
+        this.mbrColr = "blue";
+    }
+
     /** <summary>
      * 회원정보
      * 가입시 필요 정보 및 스케쥴 로드 시 필요 정보
@@ -40,17 +70,19 @@ public class Member {
     @NotEmpty
     private String mbrId;
     private String mbrNick;
-    @NotEmpty
     private String mbrPwd;
     @NotEmpty
     private String mbrEmail;
     private Long mbrSeqn;
 
+    //OAuth 관련 정보 저장 칼럼
+    private String mbrAccesstoken;
+    private String mbrRefreshtoken;
+    private String mbrSocialserver;
 
     @Transient
     private String mbrCtgr;
     @Transient
     private String mbrColr;
-
 
 }

@@ -61,7 +61,6 @@ public class ScheduleController {
 
         Schedule saveSchedule = scheduleRepository.save(schedule);
 
-        //return "view/calendar/monthCalendar";
         return "view/calendar/fullCalendar";
     }
 

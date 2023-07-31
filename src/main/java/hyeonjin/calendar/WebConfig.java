@@ -6,13 +6,17 @@ import hyeonjin.calendar.web.filter.LogFilter;
 import hyeonjin.calendar.web.filter.LoginCheckFilter;
 import hyeonjin.calendar.web.interceptor.LogInterceptor;
 import hyeonjin.calendar.web.interceptor.LoginCheckInterceptor;
+import io.netty.resolver.DefaultAddressResolverGroup;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import reactor.netty.http.client.HttpClient;
 
 import java.util.List;
 
@@ -29,14 +33,13 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LogInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/*.ico", "/error");
+                .excludePathPatterns("/css/**", "/images/**", "/*.ico", "/error");
 
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/join","/login","/logout","/join/**","/CalendarCategory","/CalendarCategory/**","/login/**",
-
-                        "/css/**", "/*.ico", "/error");
+                .excludePathPatterns("/", "/join","/login","/logout","/join/**","/CalendarCategory","/CalendarCategory/**","/login/**"
+                        ,"/css/**", "/images/**", "/*.ico", "/error");
     }
 
     @Bean
@@ -58,4 +61,16 @@ public class WebConfig implements WebMvcConfigurer {
 
         return filterRegistrationBean;
     }
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClient.create()
+                .resolver(DefaultAddressResolverGroup.INSTANCE);
+    }
+    @Bean
+    public WebClient webClient(HttpClient httpClient) {
+        return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+    }
+
 }

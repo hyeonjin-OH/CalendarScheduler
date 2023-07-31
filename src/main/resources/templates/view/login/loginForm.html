@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" type="text/css" href="/css/basic.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500&display=swap" rel="stylesheet">
     
     <title>Calendar</title>
+<!--    <script src="https://apis.google.com/js/platform.js" async defer></script>-->
 </head>
 <body class="body-no-margin">
 <div class="fullScreen">
@@ -26,18 +30,26 @@
                     <div>
                         <input type="text" id="loginId" th:field="*{loginId}" class="loginFormBox" placeholder="아이디"
                                th:errorclass="field-error">
-<!--                        <div class="field-error" th:errors="*{loginId}" />-->
                     </div>
                     <div>
                         <input type="password" id="password" th:field="*{password}" class="loginFormBox" placeholder="비밀번호"
                                th:errorclass="field-error">
-<!--                        <div class="field-error" th:errors="*{password}" />-->
                     </div>
                     <input type="submit" class="loginBtn" value="로그인">
         
                     <hr class = "line">
         
                     <a th:onclick="|location.href='@{/login/find}'|" style="cursor: pointer;">비밀번호를 잊으셨나요?</a>
+                    
+                    <div class="bot-blank"></div>
+                    <div th:onclick="|location.href='@{/login/socialgoogle}'|" class="social-login">
+                        <div class="login-logo">
+                            <img class="login-logo-img" src="/images/google.png">
+                        </div>
+                        <div class="social-login-text">
+                            <a class = "social-login-a"> Google 로그인 </a>
+                        </div>
+                    </div>
 
                     <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
                     <p class="field-error" th:each="err : ${#fields.globalErrors()}"

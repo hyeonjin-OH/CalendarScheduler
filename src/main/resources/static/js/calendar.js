@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 start: 'dayGridMonth,timeGridWeek,timeGridDay', // headerToolbar에 버튼을 추가
                 center: 'title',
                 end: 'today prev,next'  // 스페이스-버튼띄움 ,-붙여서 생성
-            }, /*customButtons: {
+            }/*, customButtons: {
                 addEventButton: { // 추가한 버튼 설정
                     text : "일정 추가",  // 버튼 내용
                     click : function(){ // 버튼 클릭 시 이벤트 추가
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         modalDataSetting();
                     }
                 }
-            },*/dateClick: function(info) {
+            }*/,dateClick: function(info) {
                 modalSetting();
                 modalDataSetting(info);
             }
@@ -86,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             location.reload();
                           }
                       });
+
                     });
                   });
 
