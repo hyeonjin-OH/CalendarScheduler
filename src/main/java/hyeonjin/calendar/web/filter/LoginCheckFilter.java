@@ -15,7 +15,7 @@ import java.io.IOException;
 public class LoginCheckFilter implements Filter {
 
     // logfilter 제외 경로 설정
-    private static final String[] whitelist = {"/","/join", "/login", "/logout","/login/**","/join/**","/CalendarCategory","/CalendarCategory/**", "/css/*"};
+    private static final String[] whitelist = {"/","/join", "/login", "/logout","/login/**","/join/**","/CalendarCategory","/CalendarCategory/**", "/css/*", "/images/**"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

@@ -42,15 +42,7 @@ public class MCalendarController {
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
         HttpSession session = request.getSession();
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
-/*
-        String mbrId = m.getMbrId();
 
-        // 프로필 수정 및 캘린더 추가 후 다시 조회할 수도 있기 때문에 id 기반으로 멤버정보 재조회
-        m = memberRepository.findByMbrId(mbrId).get();
-
-        Optional<Member> mbrSeqn = memberRepository.findSeqn(mbrId);
-        Long seqn = Long.parseLong(mbrSeqn.get().getMbrSeqn());
-*/
         Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(m.getMbrId(),m.getMbrSeqn());
         CalCategory ctgrInfo = mbrCtgr.get();
 
@@ -148,6 +140,16 @@ public class MCalendarController {
             code = member.getMbrCtgr();
         }
 
+        calCategory = CalCategory.builder()
+                .ctgrRgdt(nowT)
+                .ctgrId(member.getMbrId())
+                .ctgrCode(code)
+                .ctgrSeqn(ctgrSeqn)
+                .ctgrColr(member.getMbrColr())
+                .ctgrCrdt(DateTimeFormatter.ofPattern("yyyyMMdd").format(nowT))
+                .ctgrFlag('Y')
+                .build();
+        /*
         calCategory.setCtgrRgdt(nowT);
         calCategory.setCtgrId(member.getMbrId());
         calCategory.setCtgrCode(code);
@@ -155,7 +157,7 @@ public class MCalendarController {
         calCategory.setCtgrCrdt(DateTimeFormatter.ofPattern("yyyyMMdd").format(nowT));
         calCategory.setCtgrColr(member.getMbrColr());
         calCategory.setCtgrFlag('Y');
-
+        */
         categoryRepository.save(calCategory);
         memberRepository.updateSeqn(member.getMbrId(), member.getMbrSeqn());
 
