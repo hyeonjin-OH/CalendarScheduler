@@ -1,4 +1,39 @@
+
+
 document.addEventListener('DOMContentLoaded', function () {
+        var calSeqn = document.querySelector("#seqn").value
+
+//document.write('<script type="text/javascript" src="/js/login.js"></script>');
+//var setTokenfunc = setToken(jqXHR);
+/*
+    $.ajax({
+        type:"get",
+        url:"/Calendar",
+        beforeSend:function(jqXHR){
+                let accessToken =  localStorage.getItem('accessToken');
+                let expiredTime =  localStorage.getItem('expiredTime');
+                let refreshToken =  localStorage.getItem('refreshToken');
+                let exTime = expiredTime - new Date();
+
+                // accessToken 만료시간 다 되었을 시 (10s)
+                if(exTime <10000){
+                    jqXHR.setRequestHeader("refresh_token", refreshToken);
+                }
+
+                else{
+                    jqXHR.setRequestHeader("access_token", accessToken);
+                }
+        },
+        success:function(res){
+            console.log("Calendar Get Success");
+        },
+        error:function(err){
+            console.log("Calendar Get Error");
+            location.replace("redirect:/Calendar");
+        }
+    })
+
+*/
       $(function () {
 	    var request = $.ajax({
 		 type:"get",
@@ -34,6 +69,9 @@ document.addEventListener('DOMContentLoaded', function () {
               const loginId = document.querySelector("#loginMbrId").value;
               const eventId = info.event.extendedProps.scdId;
               const id = info.event.extendedProps.id;
+              const wkno = info.event.extendedProps.scdWkno;
+
+              document.getElementById("hiddenWkno").value = wkno;
 
               if(loginId == eventId)
               {
@@ -128,7 +166,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 let todt =document.getElementById("todt_update");
                 let frtm =document.getElementById("frtm_update");
                 let totm =document.getElementById("totm_update");
+                let writer = document.getElementById("writer-update");
 
+                writer.value = info.event.extendedProps.nick;
                 subj.value = info.event.title;
                 cnts.value = info.event.extendedProps.description;
                 var yyyymmdd_s = info.event.start.toISOString().slice(0,10);
@@ -170,7 +210,91 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert( "Request failed: " + textStatus );
         });
       });
+
+      document.getElementById("find-schedules").addEventListener("click", function(){
+            var screen = document.querySelector('#modal.modal-overlay');
+            screen.style.display = "flex";
+
+            var modal = document.querySelector('.find-modal-window');
+            modal.style.display = "block";
+
+           screen.addEventListener("click", e=>{
+                const eTarget = e.target;
+                if(eTarget.classList.contains("modal-overlay")){
+                    modal.style.display = "none";
+                    screen.style.display="none";
+                }
+           });
+      })
+
+    document.querySelector(".find-input").addEventListener("keypress", (e)=>{
+        if(e.keyCode == 13){
+        clearList();
+        let findText = document.querySelector(".find-input").value;
+                      e.preventDefault();
+                      $.ajax({
+                        url :"/Calendar/find"
+                        ,type: "post"
+                        ,data: {"findTxt" : findText, "seqn" : calSeqn}
+                        ,success:function(data){
+                            console.log("data : "+data);
+                            addList(data);
+                        }
+                        ,error:function(err){
+                        }
+                      });
+        }
+    })
+
+
+            $("#find-icon").on("click", function(e){
+            clearList();
+              let findText = document.querySelector(".find-input").value;
+              e.preventDefault();
+              $.ajax({
+                url :"/Calendar/find"
+                ,type: "post"
+                ,data: {"findTxt" : findText, "seqn" : calSeqn}
+                ,success:function(data){
+                    console.log("data : "+data);
+                    addList(data);
+                }
+                ,error:function(err){
+                }
+              });
+            });
+
+            function addList(data){
+                let jsonData = JSON.parse(data);
+                const cnt = jsonData.length;
+                const listBox = document.getElementById("find-list-box");
+
+                for(let i=0; i<cnt; i++){
+                    const divbox = document.createElement('div');
+                    divbox.className = "find-list-div";
+                    listBox.appendChild(divbox);
+
+                    const spanbox = document.createElement('span');
+                    spanbox.className="find-list-text";
+                    spanbox.innerHTML = "["+jsonData[i].start+ "]<br/>"+jsonData[i].nick + " || " + jsonData[i].title  ;
+                    divbox.appendChild(spanbox);
+
+
+                }
+            }
+
+            function clearList(){
+                const list = document.getElementsByClassName("find-list-div");
+
+                if(list.length != 0){
+                    for(let a=0; a<list.length; a++){
+                        list[a].remove();
+                    }
+                }
+            }
 });
+
+
 
 function modalSetting(){
     var screen = document.querySelector('#modal.modal-overlay');
@@ -233,6 +357,7 @@ function modalDataSetting(info = null){
     let todt =document.getElementById("todt");
     let frtm =document.getElementById("frtm");
     let totm =document.getElementById("totm");
+
     if(info!= null){
         frdt.value = info.dateStr;
         todt.value = info.dateStr;

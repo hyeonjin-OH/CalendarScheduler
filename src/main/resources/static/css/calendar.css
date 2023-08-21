@@ -3,6 +3,7 @@
     height:90%;
     padding-left:15%;
 }
+
 .fullScreen{
         width:100vw;
         height:100vh;
@@ -43,6 +44,8 @@
     display: none;
     justify-content: center;
 }
+
+
 #modal .modal-window-update {
     background-color:#add8e6;
 
@@ -57,7 +60,7 @@
     justify-content: center;
 }
 #modal .close-area {
-    display: inline;
+    display: none;
     padding-right: 10px;
     cursor: pointer;
     color: #c0c0c0;
@@ -107,6 +110,20 @@ img{
     margin: 0 2px 0 2px;
     background-color: #add8e6;
 }
+.find-schedule-icon{
+    box-sizing: border-box;
+    float:right;
+    width:50px;
+    height:50px;
+    justify-content: center;
+    display:flex;
+    align-items: center;
+    border-radius: 5px;
+    padding: 8px 0 8px 0;
+    margin: 0 2px 0 2px;
+    background-color: #add8e6;
+    cursor: pointer;
+}
 .accountInfo{
     box-sizing: border-box;
     float:right;
@@ -119,11 +136,12 @@ img{
     padding: 8px 0 8px 0;
     margin: 0 2px 0 2px;
     background-color: #add8e6;
+    cursor:pointer;
 }
 .sub-account-wrap{
     position:absolute;
-    top:50px;
-    right:5px;
+    top:41px;
+    right:2px;
     width:200px;
     display: none;
     z-index: 100;

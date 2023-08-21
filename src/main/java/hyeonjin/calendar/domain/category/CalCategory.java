@@ -1,15 +1,20 @@
 package hyeonjin.calendar.domain.category;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+
 
 @Data
 @Entity(name="categoryinfo")    //createquery에 쓰일 이름
 @Table(name="categoryinfo")
 @Builder
+@DynamicUpdate
+@AllArgsConstructor
 public class CalCategory {
 
     public CalCategory(){

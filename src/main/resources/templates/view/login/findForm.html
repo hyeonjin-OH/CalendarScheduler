@@ -173,7 +173,7 @@
                  ,data : {"mbrid" : $("#loginId").val(), "mbremail":$("#email").val()}
                  ,success :function(data){
                  console.log("data : "+data);
-                    if(data){
+                    if(!data){
                       $("#txtRes").text("유효한 계정입니다.").css("color","green");
                       $(".hidden-box").css("display","block");
                     }

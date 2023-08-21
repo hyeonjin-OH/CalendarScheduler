@@ -1,19 +1,13 @@
 package hyeonjin.calendar.domain.member;
 
-import hyeonjin.calendar.domain.category.CalCategory;
-import hyeonjin.calendar.domain.category.CalCategoryRepository;
-import hyeonjin.calendar.web.category.categoryController;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,29 +15,12 @@ public class MemberRepository {
 
     @PersistenceContext
     private  EntityManager em;
-
-    @Autowired
-    private CalCategoryRepository calRepository = new CalCategoryRepository();
-
-    private final categoryController ctgrController;
     private Long seq = 0L;
-
-    public MemberRepository(categoryController ctgrController) {
-        this.ctgrController = ctgrController;
-    }
 
     @Transactional(rollbackOn = {SQLException.class})
     public Member save(Member member){
-        seq = findMaxMember();
-        //try catch작업
-            CalCategory calCategory = new CalCategory();
-            LocalDateTime nowT = LocalDateTime.now();
-            if(member.getMbrSeqn()== null){
-                member.setMbrSeqn(Long.parseLong(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++seq).toString()));
-            }
-            member.setMbrRgdt(nowT);
             em.persist(member);
-            ctgrController.save(member);
+
             return member;
     }
 
@@ -75,14 +52,12 @@ public class MemberRepository {
     @Transactional
     public Integer updatePwd(Member member){
         LocalDateTime nowT = LocalDateTime.now();
-
             return em.createQuery("update memberinfo m set m.mbrUpdt=:updt, m.mbrPwd=:pwd where m.mbrId=:id and m.mbrEmail=:email")
                     .setParameter("updt", nowT)
                     .setParameter("id", member.getMbrId())
                     .setParameter("pwd", member.getMbrPwd())
                     .setParameter("email", member.getMbrEmail())
                     .executeUpdate();
-
     }
 
     @Modifying
@@ -95,23 +70,14 @@ public class MemberRepository {
                 .setParameter("id", id)
                 .setParameter("seqn", seqn)
                 .executeUpdate();
-
     }
     public Member findById(String id){
-
         return em.find(Member.class, id);
     }
 
     public Optional<Member> findByMbrId(String loginid){
         return em.createQuery("select c from memberinfo c where c.mbrId = :loginid", Member.class)
                 .setParameter("loginid", loginid)
-                .getResultList().stream().findAny();
-    }
-
-    public Optional<Member> findByMbrPwd(String loginid, String pwd){
-        return em.createQuery("select c from member c where c.mbrId = :loginid and c.mbrPwd = :pwd", Member.class)
-                .setParameter("loginid", loginid)
-                .setParameter("pwd", pwd)
                 .getResultList().stream().findAny();
     }
 
@@ -128,10 +94,11 @@ public class MemberRepository {
                 .getResultList().stream().findAny();
     }
 
-    public Optional<Member> findSocialMember(String mbremail){
-        return em.createQuery("select c from memberinfo c where c.mbrEmail =:email and c.mbrId LIKE :id", Member.class)
+    public Optional<Member> findSocialMember(String mbremail, String social, String mbrid){
+        return em.createQuery("select c from memberinfo c where c.mbrEmail =:email and c.mbrId = :id and c.mbrSocialserver=:social", Member.class)
                 .setParameter("email", mbremail)
-                .setParameter("id", "social%")
+                .setParameter("social", social)
+                .setParameter("id", mbrid)
                 .getResultList().stream().findAny();
     }
 
@@ -145,9 +112,39 @@ public class MemberRepository {
         return em.createQuery("select count(c) from memberinfo c", Long.class)
                 .getSingleResult();
     }
-    public List<Member> findAll(){
 
-        return null;
+    @Modifying
+    @Transactional(rollbackOn = {SQLException.class})
+    public Integer updateRefreshToken(String id, String email, String refreshToken){
+        LocalDateTime nowT = LocalDateTime.now();
+
+        return em.createQuery("update memberinfo m set m.mbrUpdt=:updt, m.mbrRefreshtoken=:refreshtoken where m.mbrId=:id and m.mbrEmail=:email")
+                .setParameter("updt", nowT)
+                .setParameter("id", id)
+                .setParameter("email", email)
+                .setParameter("refreshToken", refreshToken)
+                .executeUpdate();
+
     }
+
+    public Optional<Member> findRefreshToken(String id, String email){
+        return em.createQuery("select m from memberinfo m where m.mbrId=:id and m.mbrEmail=:email", Member.class)
+                .setParameter("id", id)
+                .setParameter("email", email)
+                .getResultList().stream().findAny();
+    }
+
+    public Optional<Member> findByRefreshToken(String refreshToken) {
+        return em.createQuery("select m from memberinfo m where m.mbrRefreshtoken=:refresh", Member.class)
+                .setParameter("refresh", refreshToken)
+                .getResultList().stream().findAny();
+    }
+
+    public String findNickName(String id){
+        return em.createQuery("select m.mbrNick from memberinfo m where m.mbrId =:id", String.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
 
 }

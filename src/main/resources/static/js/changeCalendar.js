@@ -1,4 +1,4 @@
-$("#delete-button").click(function(e){
+$(".delete-button").click(function(e){
     var str = ""
     var tdArr = new Array();    // 배열 선언
     var checkBtn = $(this);
@@ -15,17 +15,17 @@ $("#delete-button").click(function(e){
             ,data : {"ctgrId" : id, "ctgrSeqn" : seqn}
             ,type: "post"
             ,success : function(data){
-                console.log("data : "+data);
+                console.log("success : "+data);
                 location.reload();
             },error : function(req,status,err){
-               console.log(req);
+               console.log("err : " + err);
             }
         });
 
 });
 
 
-$(".change-button ").click(function(e){
+$(".change-button").click(function(e){
     var str = ""
     var tdArr = new Array();    // 배열 선언
     var checkBtn = $(this);
@@ -35,14 +35,16 @@ $(".change-button ").click(function(e){
 
     var id = td.eq(0).text().trim();
     var seqn = td.eq(2).text().trim();
+    var data = {"mbrId" : id, "mbrSeqn" : seqn};
 
     e.preventDefault();
     $.ajax({
         url : "/Calendar/change"
-        ,data : {"mbrId" : id, "mbrSeqn" : seqn}
+        ,data : JSON.stringify(data)
         ,type: "post"
-        ,success : function(data){
-            console.log("data : "+data);
+        ,contentType : 'application/json'
+        ,success : function(res){
+            console.log("res : "+res);
             location.reload();
         },error : function(req,status,err){
                         console.log(req);

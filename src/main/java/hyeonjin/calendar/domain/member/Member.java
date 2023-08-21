@@ -2,19 +2,22 @@ package hyeonjin.calendar.domain.member;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity(name="memberinfo")
 @Table(name="memberinfo")
+@NoArgsConstructor
+@Builder
+@DynamicUpdate
+@AllArgsConstructor
 public class Member {
-
-    public Member(){
-
-    }
 
     @Builder(builderMethodName = "loginMember", builderClassName = "loginMember")
     public Member(Long id, String mbrId, String mbrNick, String mbrEmail, Long mbrSeqn,
@@ -84,5 +87,7 @@ public class Member {
     private String mbrCtgr;
     @Transient
     private String mbrColr;
+
+    private String mbrRole;
 
 }

@@ -4,7 +4,7 @@ import hyeonjin.calendar.domain.category.CalCategory;
 import hyeonjin.calendar.domain.category.CategoryRepository;
 import hyeonjin.calendar.domain.member.Member;
 import hyeonjin.calendar.domain.schedule.Schedule;
-import hyeonjin.calendar.domain.schedule.ScheduleRepository;
+import hyeonjin.calendar.domain.schedule.SchedulesRepository;
 import hyeonjin.calendar.web.SessionConst;
 import hyeonjin.calendar.web.session.SessionManager;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -25,7 +26,8 @@ import java.util.Optional;
 public class ScheduleController {
     private final CategoryRepository categoryRepository;
 
-    private final ScheduleRepository scheduleRepository;
+    //private final ScheduleRepository scheduleRepository;
+    private final SchedulesRepository schedulesRepository;
     private final SessionManager sessionManager;
 
 
@@ -36,8 +38,10 @@ public class ScheduleController {
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
         HttpSession session = request.getSession();
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+        LocalDateTime nowT = LocalDateTime.now();
 
         String mbrId = m.getMbrId();
+        String mbrNick = m.getMbrNick();
         Long mbrSeqn = m.getMbrSeqn();
 
         Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId, mbrSeqn);
@@ -52,16 +56,21 @@ public class ScheduleController {
         if(schedule.getScdTotmchk()){
             schedule.setScdTotm("23:59:59");
         }
+        Long wkno = schedulesRepository.countByScdSeqn(ctgSeqn);
+        schedule.setScdRgdt(nowT);
+        schedule.setScdFlag("Y");
+        schedule.setScdWkno(wkno);
 
         model.addAttribute("member", m);
         model.addAttribute("scdSeqn", ctgSeqn);
         model.addAttribute("scdColr", ctgColr);
         model.addAttribute("scdId", mbrId);
-        model.addAttribute("schedules",schedule);
 
-        Schedule saveSchedule = scheduleRepository.save(schedule);
 
-        return "view/calendar/fullCalendar";
+        //Schedule saveSchedule = scheduleRepository.save(schedule);
+        Schedule saveSchedule = schedulesRepository.save(schedule);
+
+        return "redirect:/Calendar";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
@@ -69,7 +78,6 @@ public class ScheduleController {
                                  HttpServletRequest request, Model model){
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
         HttpSession session = request.getSession();
-        //System.out.println("Size : " + schedule.size());
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         String mbrId = m.getMbrId();
@@ -80,23 +88,39 @@ public class ScheduleController {
 
         Long ctgSeqn = ctgrInfo.getCtgrSeqn();
         String ctgColr = ctgrInfo.getCtgrColr();
-
+        /*
         if(schedule.getScdFrtmchk()){
             schedule.setScdFrtm("00:00:00");
         }
         if(schedule.getScdTotmchk()){
             schedule.setScdTotm("23:59:00");
         }
+        */
+        Schedule updateSchedule = schedulesRepository.findByScdWknoAndScdSeqn(schedule.getScdWkno(), schedule.getScdSeqn());
+
+        if(schedule.getScdFrtmchk()){
+            updateSchedule.setScdFrtm("00:00:00");
+        }
+        if(schedule.getScdTotmchk()){
+            updateSchedule.setScdTotm("23:59:00");
+        }
+        updateSchedule.setScdCnts(schedule.getScdCnts());
+        updateSchedule.setScdUpdt(LocalDateTime.now());
+        updateSchedule.setScdTitle(schedule.getScdTitle());
+        updateSchedule.setScdFrdt(schedule.getScdFrdt());
+        updateSchedule.setScdTodt(schedule.getScdTodt());
+        updateSchedule.setScdFrtm(schedule.getScdFrtm());
+        updateSchedule.setScdTotm(schedule.getScdTotm());
 
         model.addAttribute("member", m);
         model.addAttribute("scdSeqn", ctgSeqn);
         model.addAttribute("scdColr", ctgColr);
         model.addAttribute("scdId", mbrId);
-        model.addAttribute("schedules",schedule);
+        //model.addAttribute("schedules",schedule);
 
-        Integer res = scheduleRepository.updateById(schedule);
+        schedulesRepository.save(updateSchedule);
+        //Integer res = scheduleRepository.updateById(schedule);
 
-        //return "view/calendar/monthCalendar";
         return "redirect:/Calendar";
     }
 
@@ -121,9 +145,26 @@ public class ScheduleController {
         model.addAttribute("scdSeqn", ctgSeqn);
         model.addAttribute("scdColr", ctgColr);
         model.addAttribute("scdId", mbrId);
-        model.addAttribute("schedules",schedule);
+        //model.addAttribute("schedules",schedule);
 
-        Integer res = scheduleRepository.deleteById(schedule);
+        Schedule updateSchedule = schedulesRepository.findByScdWknoAndScdSeqn(schedule.getScdWkno(), schedule.getScdSeqn());
+
+        if(schedule.getScdFrtmchk()){
+            updateSchedule.setScdFrtm("00:00:00");
+        }
+        if(schedule.getScdTotmchk()){
+            updateSchedule.setScdTotm("23:59:00");
+        }
+        updateSchedule.setScdFlag("N");
+        updateSchedule.setScdUpdt(LocalDateTime.now());
+
+        model.addAttribute("member", m);
+        model.addAttribute("scdSeqn", ctgSeqn);
+        model.addAttribute("scdColr", ctgColr);
+        model.addAttribute("scdId", mbrId);
+
+        schedulesRepository.save(updateSchedule);
+        //Integer res = scheduleRepository.deleteById(schedule);
 
         return "redirect:/Calendar";
     }

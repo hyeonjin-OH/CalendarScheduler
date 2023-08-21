@@ -25,7 +25,8 @@ public class GoogleLoginService {
     private String googleAuthUrl;
     @Value("${google.user.url}")
     private String googleUserUrl;
-    String redirectUrl = "http://localhost:8080/login/oauth2/google";
+    @Value("${google.redirect.url}")
+    private String redirectUrl;
 
     private final MemberRepository memberRepository;
 

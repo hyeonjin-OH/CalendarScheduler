@@ -1,7 +1,7 @@
 package hyeonjin.calendar.web.register;
 
 import hyeonjin.calendar.domain.member.Member;
-import hyeonjin.calendar.domain.member.MemberRepository;
+import hyeonjin.calendar.domain.member.MembersRepository;
 import hyeonjin.calendar.web.SessionConst;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -24,7 +25,9 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class RegisterController {
 
-    private final MemberRepository memberRepository;
+    private final MembersRepository memberRepository;
+    private final RegisterService registerService;
+
     @GetMapping("/join")
     public String register(@ModelAttribute("member")Member member){
         return "view/login/joinForm";
@@ -47,16 +50,18 @@ public class RegisterController {
         if(bindingResult.hasErrors()) {
             return "view/login/joinForm";
         }
+        String redir = "";
 
-        Member joinMember = memberRepository.save(member);
+        try{
+            redir =registerService.register(member);
+        }
+        catch (SQLException e){
 
-        if(joinMember == null){
-            bindingResult.reject("JoinFail", "회원가입 중 오류가 발생하였습니다.");
-
-            return "view/login/joinForm";
+            bindingResult.reject("RegisterFail", "회원가입에 실패하였습니다.");
+            return  "view/login/joinForm";
         }
 
-        return "redirect:/login";
+        return redir;
     }
 
     @GetMapping("/update")
@@ -74,41 +79,80 @@ public class RegisterController {
     @PostMapping("/update")
     public String updateProfile(@ModelAttribute("member")Member member, BindingResult bindingResult,
                            HttpServletRequest request){
+        String rtn = "";
+
+        if(member.getMbrPwd() != ""){
+            if (!Pattern.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$", member.getMbrPwd())) {
+                bindingResult.rejectValue("mbrPwd", "required");
+            }
+        }
+        if(!Pattern.matches("^([a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+)*$", member.getMbrEmail())){
+            bindingResult.rejectValue("mbrEmail", "required");
+        }
         if(bindingResult.hasErrors()) {
+
             return "view/login/updateForm";
         }
 
-        Integer update = memberRepository.updateInfo(member);
+        try{
+            /*
+            Member orginMember = memberRepository.findByMbrId(member.getMbrId()).get();
+            if(member.getMbrPwd()!= ""){
+                updateMember.setMbrNick(member.getMbrNick());
+                updateMember.setMbrUpdt(LocalDateTime.now());
+                updateMember.setMbrEmail(member.getMbrEmail());
+                updateMember.setMbrPwd(member.getMbrPwd());
+                updateMember.setMbrId(member.getMbrId());
+            }
+            else{
+                updateMember.setMbrNick(member.getMbrNick());
+                updateMember.setMbrUpdt(LocalDateTime.now());
+                updateMember.setMbrEmail(member.getMbrEmail());
+                updateMember.setMbrId(member.getMbrId());
+            }
+*/
+            rtn = registerService.updateInfo(member);
+        }
+        catch (Exception e){
+            bindingResult.reject("updateFail");
 
+            return "view/login/updateForm";
+        }
+
+        //Integer update = memberRepository.updateInfo(member);
+
+        /*
         if(update != 1){
             bindingResult.reject("UpdateFail", "양식에 맞지 않은 데이터가 있습니다.");
 
             return "view/login/updateForm";
         }
 
+         */
         //업데이트 후 바뀐 멤버 정보 세션에 담기
+        member= memberRepository.findByMbrId(member.getMbrId()).get();
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
 
-        return "redirect:/Calendar";
+        return rtn;
     }
 
     @PostMapping("/login/find")
     public String updatePwd(@Valid @ModelAttribute("member")Member member, BindingResult bindingResult,
                                 HttpServletRequest request){
         if(bindingResult.hasErrors()) {
-            return "redirect:/login/find";
-        }
-
-        Integer update = memberRepository.updatePwd(member);
-
-        if(update != 1){
-            bindingResult.reject("UpdateFail", "양식에 맞지 않은 데이터가 있습니다.");
+            bindingResult.reject("UpdateFail");
 
             return "redirect:/login/find";
         }
 
-        return "redirect:/login";
+        try{
+            return registerService.updatePwd(member);
+        }
+        catch (SQLException e){
+            bindingResult.reject("UpdateFail", "수정에 실패하였습니다.");
+            return "redirect:/login/find";
+        }
     }
 
     @GetMapping("/join/idchk")
@@ -130,8 +174,8 @@ public class RegisterController {
         String id = mbrid;
         String email = mbremail;
 
-        Optional<Member> byMbrId = memberRepository.findByMbrIdAndEmail(id, email);
-        if(byMbrId.equals(Optional.empty())){
+        //Optional<Member> byMbrId = memberRepository.findByMbrIdAndMbrEmail(id, email);
+        if(memberRepository.findByMbrIdAndMbrEmail(id, email).isPresent()) {
             return false;
         }
         else {

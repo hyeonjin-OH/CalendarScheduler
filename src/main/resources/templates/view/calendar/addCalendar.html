@@ -120,10 +120,10 @@
             <a th:onclick="|location.href='@{/update}'|" class="sub-account-link">
               <span class="material-symbols-outlined">account_circle</span><p>&nbsp;&nbsp;프로필수정</p>
             </a>
-            <a href="#" class="sub-account-link">
+            <a th:onclick="|location.href='@{/Calendar/add}'|" class="sub-account-link">
               <span class="material-symbols-outlined">add_ad</span><p>&nbsp;&nbsp;캘린더 추가</p>
             </a>
-            <a href="#" class="sub-account-link">
+            <a th:onclick="|location.href='@{/Calendar/change}'|" class="sub-account-link">
               <span class="material-symbols-outlined">select_window</span><p>&nbsp;&nbsp;캘린더 변경</p>
             </a>
             <form th:action="@{/logout}" method="post" class="sub-account-link">

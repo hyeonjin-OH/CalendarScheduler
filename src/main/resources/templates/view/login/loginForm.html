@@ -8,8 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500&display=swap" rel="stylesheet">
-    
-    <title>Calendar</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="/js/login.js"></script>
+
 <!--    <script src="https://apis.google.com/js/platform.js" async defer></script>-->
 </head>
 <body class="body-no-margin">
@@ -50,7 +51,9 @@
                             <a class = "social-login-a"> Google 로그인 </a>
                         </div>
                     </div>
-
+                    <div class="bot-blank"></div>
+                    <span class="join-rule">• 소셜로그인 시 회원가입되지 않은 아이디라면 자동 회원가입됩니다.</span>
+                    
                     <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
                     <p class="field-error" th:each="err : ${#fields.globalErrors()}"
                    th:text="${err}">전체 오류 메시지</p> </div>
@@ -60,4 +63,5 @@
     </div>
 </div>
 </body>
+
 </html>

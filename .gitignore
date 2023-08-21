@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/main/java/hyeonjin/calendar/domain/dto/
+/src/main/java/hyeonjin/calendar/domain/jwt/
+/src/main/java/hyeonjin/calendar/domain/oauth/
+/src/main/java/hyeonjin/calendar/web/sample/

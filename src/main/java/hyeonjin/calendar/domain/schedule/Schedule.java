@@ -1,13 +1,19 @@
 package hyeonjin.calendar.domain.schedule;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity(name ="schedulelist")
 @Table(name="schedulelist")
+@Builder
+@DynamicUpdate
+@AllArgsConstructor
 public class Schedule {
 
     public Schedule(){
@@ -33,7 +39,6 @@ public class Schedule {
     private Long scdWkno;
     private String scdCnts;
 
-    @Transient
     private String scdColr;
 
     private String scdFlag;

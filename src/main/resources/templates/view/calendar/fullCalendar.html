@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.7.0/main.min.css">
   <link rel="stylesheet" type="text/css" href="/css/schedule.css" />
   <link rel="stylesheet" type="text/css" href="/css/calendar.css" />
+  <link rel="stylesheet" type="text/css" href="/css/findarea.css" />
   
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fullcalendar@5.7.0/main.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
@@ -32,7 +33,7 @@
       <form action="" id = "schedulePop" th:action="@{/schedulePop}" th:object="${schedule}"
             method="post"  class = "schedule_form">
         <div class="schedule_subject">
-          <input type="hidden" th:field="*{scdSeqn}" th:value="${scdSeqn}" />
+          <input type="hidden" id = "seqn" th:field="*{scdSeqn}" th:value="${scdSeqn}" />
           <input type="hidden" th:field="*{scdId}" th:value="${scdId}" />
           <input type="hidden" th:field="*{scdColr}" th:value="${scdColr}" />
           <div class="schedule_text_div">
@@ -98,6 +99,7 @@
           <input type="hidden" th:field="*{scdSeqn}" th:value="${scdSeqn}" />
           <input type="hidden" th:field="*{scdId}" th:value="${scdId}" />
           <input type="hidden" th:field="*{scdColr}" th:value="${scdColr}" />
+          <input type="hidden" id ="hiddenWkno" th:field="*{scdWkno}" th:value="${scdWkno}" />
           <div class="schedule_text_div">
             <label for="subject" class="schedule_text">일정명 </label>
           </div>
@@ -143,7 +145,10 @@
 <!--          <input type="text" id="contents_update" th:field="*{scdCnts}" class="schedule_contents_box" />-->
         </div>
         <div class="schedule_etc">
-        
+          <div class="schedule_text_div">
+            <label for="subject" class="schedule_text">작성자 </label>
+          </div>
+            <input type="text"  id = "writer-update" class="schedule_subject_box" disabled>
         </div>
         <div class="schedule_detail_div">
           <span class="schedule_text">• 체크박스 체크 시 종일 시간으로 설정</span>
@@ -157,8 +162,8 @@
     <div  class="close-area"><span class="material-symbols-rounded">cancel</span></div>
   </div>
   <div class="accountSpace">
-    <input type="hidden" id="calSeqn" th:value="${scdSeqn}">
-    <input type="hidden" id="calColr" th:value="${scdColr}">
+<!--    <input type="hidden" id="calSeqn" th:value="${scdSeqn}">-->
+<!--    <input type="hidden" id="calColr" th:value="${scdColr}">-->
     <div class ="account-logo" th:onclick="|location.href='@{/Calendar}'|">
       <img src="/images/cal.png">
     </div>
@@ -189,10 +194,23 @@
         </div>
       </div>
       <div class="accountFreeNote"><span class="material-symbols-outlined">event_note</span></div>
+      <div id="find-schedules" class="find-schedule-icon"><span class="material-symbols-outlined">search</span></div>
+    </div>
+  </div>
+  <div class="find-modal-window">
+    <div class="find-box">
+      <input type="text" class="find-input" placeholder="제목 또는 내용">
+      <span id="find-icon" class="material-symbols-outlined">search</span>
+    </div>
+    <div id="find-list-box" class="list-box">
+    
     </div>
   </div>
   <div id="calendarBox">
-    <div id="calendar"></div>
+    <div id="calendar">
+
+    </div>
+
   </div>
 </div>
 

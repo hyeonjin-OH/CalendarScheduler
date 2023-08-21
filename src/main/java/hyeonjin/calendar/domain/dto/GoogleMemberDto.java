@@ -14,6 +14,7 @@ public class GoogleMemberDto {
 
     public Member toEntity(GoogleToken googleToken){
         return Member.socialMember()
+                .mbrId(id)
                 .mbrEmail(email)
                 .mbrNick(name)
                 .mbrAccesstoken(googleToken.getAccess_token())

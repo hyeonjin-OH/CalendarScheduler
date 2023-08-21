@@ -1,10 +1,10 @@
 package hyeonjin.calendar.web.login;
 
+import hyeonjin.calendar.domain.jwt.JwtProvider;
 import hyeonjin.calendar.domain.login.GoogleLoginService;
 import hyeonjin.calendar.domain.login.LoginService;
 import hyeonjin.calendar.domain.member.Member;
 import hyeonjin.calendar.domain.member.MemberRepository;
-import hyeonjin.calendar.domain.oauth.google.GoogleToken;
 import hyeonjin.calendar.web.SessionConst;
 import hyeonjin.calendar.web.argumentresolver.Login;
 import hyeonjin.calendar.web.session.SessionManager;
@@ -14,17 +14,11 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -35,18 +29,26 @@ public class LoginController {
     private final SessionManager sessionManager;
     private final MemberRepository memberRepository;
 
-    @Value("${google.client.id}")
-    private String googleClientId;
-    @Value("${google.client.secret}")
-    private String googleClientSecret;
-    @Value("${google.rtoken.url}")
-    private String googleTokenUrl;
-    @Value("${google.auth.url}")
-    private String googleAuthUrl;
+//    @Value("${google.client.id}")
+//    private String googleClientId;
+//    @Value("${google.client.secret}")
+//    private String googleClientSecret;
+//    @Value("${google.rtoken.url}")    @Value("${google.client.id}")
+////    private String googleClientId;
+////    @Value("${google.client.secret}")
+////    private String googleClientSecret;
+////    @Value("${google.rtoken.url}")
+////    private String googleTokenUrl;
+////    @Value("${google.auth.url}")
+////    private String googleAuthUrl;
+//    private String googleTokenUrl;
+//    @Value("${google.auth.url}")
+//    private String googleAuthUrl;
 
     String redirectUrl = "http://localhost:8080/login/oauth2/google";
 
     private final GoogleLoginService googleLoginService;
+    private final JwtProvider jwtProvider;
 
     @GetMapping("/login")
     public String login(@ModelAttribute("loginForm") LoginForm form, @Login Member loginMember){
@@ -60,7 +62,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginForm") LoginForm form, BindingResult bindingResult,
-                        HttpServletRequest request){
+                        HttpServletRequest request, HttpServletResponse response){
         if(bindingResult.hasErrors()) {
             bindingResult.reject("notnull", "기입하지 않은 정보가 있습니다.");
             return "view/login/loginForm";
@@ -73,6 +75,13 @@ public class LoginController {
 
             return "view/login/loginForm";
         }
+
+        String accessToken = jwtProvider.createAccessToken(form.getLoginId(), "");
+        String refreshToken = jwtProvider.createRefreshToken();
+
+        response.setHeader("access_token", accessToken);
+        response.setHeader("refresh_Token", refreshToken);
+        response.setStatus(HttpServletResponse.SC_OK);
 
         //세션이 있으면 있는 세션 반환, 없으면 신규 세션 생성
         HttpSession session = request.getSession();
@@ -98,7 +107,7 @@ public class LoginController {
 
         return "view/login/findForm";
     }
-
+/*
     @GetMapping("/login/socialgoogle")
     public String loginGoogleRedirect(){
         String reqUrl = googleAuthUrl + googleClientId
@@ -113,8 +122,9 @@ public class LoginController {
     }
 
     @GetMapping("/login/oauth2/google")
-    public String loginGoogle(HttpServletRequest request, @RequestParam(value = "code") String authCode,
-                              HttpServletResponse response){
+    @ResponseBody
+    public ResponseEntity<Object> loginGoogle(HttpServletRequest request, @RequestParam(value = "code") String authCode,
+                                      HttpServletResponse response, Model model){
 
         LocalDateTime nowT = LocalDateTime.now();
 
@@ -123,28 +133,60 @@ public class LoginController {
         Member socialM = googleLoginService.requestGoogleUserInfo(googleToken1);
 
         String email = socialM.getMbrEmail();
-        Optional<Member> member = memberRepository.findSocialMember(email);
+        String social = socialM.getMbrSocialserver();
+        String id = socialM.getMbrId();
+
+        //memberRepository.updateRefreshToken(id, email, refreshToken);
+
+        Optional<Member> member = memberRepository.findSocialMember(email, social, id);
         Long maxSrno = memberRepository.findMaxMember();
 
         // email이 존재한다면 가입한 것으로 보고 로그인 없으면 바로 회원가입시켜서 로그인
         if(!member.isPresent()) {
-
             socialM.setMbrRgdt(nowT);
-            socialM.setMbrId("social"+DateTimeFormatter.ofPattern("HHmmss").format(nowT)+ (++maxSrno).toString());
             socialM.setMbrSeqn(Long.parseLong(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++maxSrno).toString()));
-
             memberRepository.save(socialM);
 
-            return "redirect:/login";
+            response.setHeader("url", "redirect:/login");
+            return ResponseEntity.ok(response);
+            // return "redirect:/login";
         }
         else{
+
             HttpSession session = request.getSession();
             session.setAttribute(SessionConst.LOGIN_MEMBER, member.get());
 
-            return "redirect:/Calendar";
+            String accessToken = jwtProvider.createAccessToken(id, email);
+            String refreshToken = jwtProvider.createRefreshToken();
+
+
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.set("access_Token",accessToken);
+            headers.set("refresh_Token", refreshToken);
+            headers.set("expired_Time",jwtProvider.get_expiredTime().toString());
+
+           // headers.setLocation(URI.create("http://localhost:8080/login/oauth2"));
+            model.addAttribute("access_Token", accessToken);
+            model.addAttribute("refresh_Token", refreshToken);
+
+
+            return new ResponseEntity<>(headers, HttpStatus.OK);
+
+
+        //    return new ResponseEntity<>(headers, HttpStatus.OK);
+
+//            response.setHeader("access_Token", accessToken);
+//            response.setHeader("refresh_Token", refreshToken);
+//            response.setHeader("Location", "redirect:/Calendar");
+            //response.setStatus(HttpServletResponse.SC_OK);
+
+            //return ResponseEntity.ok().build();
+
+            //return "redirect:/Calendar";
         }
 
-/*
+/// 주석
         GoogleRequest googleOAuthRequest = GoogleRequest
                 .builder()
                 .clientId(googleClientId)
@@ -204,14 +246,41 @@ public class LoginController {
 
             return "redirect:/Calendar";
         }
+    ///주석 끝
 
- */
     }
 
-    @PostMapping("/login/oauth2/google")
-    public String loginGoogleToken(){
 
-        return "";
+    @GetMapping("/login/oauth2")
+    public String oauth(Model model){
+
+        return "view/login/oauth2";
+
     }
+
+
+    //refresh token만료 시 재발행
+    @GetMapping("/login/updateToken")
+    public void updateJwtAccessToken(String accessToken, String refreshToken,
+                                     HttpServletResponse response) {
+
+        try {
+            jwtProvider.validateToken(accessToken);
+        } catch (ExpiredJwtException e) {
+            Map<String, String> user = jwtProvider.userinfoToken(accessToken);
+
+            validateRefreshToken(refreshToken, memberRepository.findRefreshToken("","").get().getMbrRefreshtoken());
+
+            Member member = memberRepository.findByMbrId("").get();
+            response.setHeader("access_token", jwtProvider.createAccessToken("",""));
+        }
+    }
+
+    private void validateRefreshToken(String refreshToken1, String refreshToken2) {
+        if (refreshToken1.equals(refreshToken2)) {
+            throw new JwtException("refreshToken 재발급");
+        }
+    }
+*/
 
 }

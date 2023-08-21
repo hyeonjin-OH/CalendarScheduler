@@ -132,6 +132,7 @@
                    required />
             <input type="hidden" id="idDupChk" value="N">
             <button type="button" id="btnChkId" class="signFormBox-id-button">중복확인</button>
+            <div class="field-error" th:errors="*{mbrId}" />
           </div>
 
           <div>
@@ -201,6 +202,7 @@
                     else{
                         $("#submitSign").prop("disabled", true);
                         $("#idDupChk").val("N");
+                        $("#txtRes").text("사용중인 아이디입니다.").css("color","red");
                         loginid.className +=" field-error";
                     }
                  },error : function(req,status,err){
@@ -302,7 +304,11 @@
           
           <hr class = "line">
           <p id ="txtRes">  </p>
-
+          
+          <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+               th:text="${err}">전체 오류 메시지</p> </div>
+          
           <div class="join-rule-div">
             <!--<span class="material-symbols-outlined">check_circle</span>-->
             <span class="join-rule">• 아이디 : 영어소문자.숫자 혼용 6~18자리</span>
@@ -312,10 +318,7 @@
             <br>
             <span class="join-rule">• 전항목 기입해주시기 바랍니다.</span>
           </div>
-
-          <div th:if="${#fields.hasGlobalErrors()}" class="errorSpace">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
-               th:text="${err}">전체 오류 메시지</p> </div>
+          
           <div class="bot-blank"></div>
         </form>
       </div>

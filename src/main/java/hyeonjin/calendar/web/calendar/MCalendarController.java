@@ -3,10 +3,11 @@ package hyeonjin.calendar.web.calendar;
 import hyeonjin.calendar.domain.category.CalCategory;
 import hyeonjin.calendar.domain.category.CategoryRepository;
 import hyeonjin.calendar.domain.member.Member;
-import hyeonjin.calendar.domain.member.MemberRepository;
+import hyeonjin.calendar.domain.member.MembersRepository;
 import hyeonjin.calendar.domain.schedule.Schedule;
-import hyeonjin.calendar.domain.schedule.ScheduleRepository;
+import hyeonjin.calendar.domain.schedule.SchedulesRepository;
 import hyeonjin.calendar.web.SessionConst;
+import hyeonjin.calendar.web.register.RegisterService;
 import hyeonjin.calendar.web.session.SessionManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -18,11 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -30,10 +31,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MCalendarController {
 
-    private final MemberRepository memberRepository;
+    //private final MemberRepository memberRepository;
+    private final MembersRepository memberRepository;
     private final CategoryRepository categoryRepository;
-    private final ScheduleRepository scheduleRepository;
+
+    private final SchedulesRepository schedulesRepository;
+
     private final SessionManager sessionManager;
+    private final CalendarService calendarService;
+    private final RegisterService registerService;
 
     @GetMapping
     public String scheduleInfo(@ModelAttribute("schedule") Schedule scd,
@@ -43,23 +49,19 @@ public class MCalendarController {
         HttpSession session = request.getSession();
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
-        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(m.getMbrId(),m.getMbrSeqn());
-        CalCategory ctgrInfo = mbrCtgr.get();
+        CalCategory ctgrInfo = categoryRepository.findByCtgrIdAndCtgrSeqn(m.getMbrId(),m.getMbrSeqn()).get();
 
         Long ctgSeqn = ctgrInfo.getCtgrSeqn();
         String ctgColr = ctgrInfo.getCtgrColr();
 
-        List<Schedule> schedule = scheduleRepository.findByschSeqn(ctgSeqn);
+        List<Schedule> schedule = schedulesRepository.findByScdSeqnAndScdFlag(ctgSeqn,"Y");
 
         model.addAttribute("member", m);
-
-        model.addAttribute("schedules",schedule);
 
         scd.setScdSeqn(ctgSeqn);
         scd.setScdId(m.getMbrId());
         scd.setScdColr(ctgColr);
 
-        //return "view/calendar/monthCalendar";
         return "view/calendar/fullCalendar";
     }
 
@@ -72,17 +74,16 @@ public class MCalendarController {
         Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         String mbrId = m.getMbrId();
-        Optional<Member> mbrSeqn = memberRepository.findSeqn(mbrId);
+        Long mbrSeqn = memberRepository.findSeqn(mbrId);
 
-        Optional<CalCategory> mbrCtgr = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId,mbrSeqn.get().getMbrSeqn());
+        CalCategory ctgrInfo = categoryRepository.findByCtgrIdAndCtgrSeqn(mbrId,mbrSeqn).get();
+        List<Schedule> schedule = schedulesRepository.findByScdSeqnAndScdFlag(ctgrInfo.getCtgrSeqn(),"Y");
+        JSONArray jsonArr = insertSchedulesJson(schedule);
 
-        CalCategory ctgrInfo = mbrCtgr.get();
+        return jsonArr.toString();
+    }
 
-        Long ctgSeqn = ctgrInfo.getCtgrSeqn();
-        String ctgColr = ctgrInfo.getCtgrColr();
-
-        List<Schedule> schedule = scheduleRepository.findByschSeqn(ctgSeqn);
-
+    private JSONArray insertSchedulesJson(List<Schedule> schedule) {
         HashMap<String, Object> hash = new HashMap<>();
 
         JSONObject jsonObj = new JSONObject();
@@ -101,14 +102,14 @@ public class MCalendarController {
             hash.put("display","block");
             HashMap<String, Object> temp = new HashMap<>();
             temp.put("scdId", schedule.get(i).getScdId());
+            temp.put("nick",memberRepository.findNickName(schedule.get(i).getScdId()));
             temp.put("id", schedule.get(i).getId());
             temp.put("scdWkno", schedule.get(i).getScdWkno());
             hash.put("extendedProps", temp);
             jsonObj = new JSONObject(hash);
             jsonArr.put(jsonObj);
         }
-
-        return jsonArr.toString();
+        return jsonArr;
     }
 
     @GetMapping("/add")
@@ -132,8 +133,7 @@ public class MCalendarController {
 
         if(member.getMbrSeqn() != null){
             ctgrSeqn=member.getMbrSeqn();
-            Optional<CalCategory> ctgr = categoryRepository.findByCtgrSeqn(ctgrSeqn).stream().findFirst();
-            code = ctgr.get().getCtgrCode();
+            code = categoryRepository.findByCtgrSeqn(ctgrSeqn).stream().findFirst().get().getCtgrCode();
         }
         else{
             ctgrSeqn = Long.parseLong(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++seq).toString());
@@ -149,17 +149,14 @@ public class MCalendarController {
                 .ctgrCrdt(DateTimeFormatter.ofPattern("yyyyMMdd").format(nowT))
                 .ctgrFlag('Y')
                 .build();
-        /*
-        calCategory.setCtgrRgdt(nowT);
-        calCategory.setCtgrId(member.getMbrId());
-        calCategory.setCtgrCode(code);
-        calCategory.setCtgrSeqn(ctgrSeqn);
-        calCategory.setCtgrCrdt(DateTimeFormatter.ofPattern("yyyyMMdd").format(nowT));
-        calCategory.setCtgrColr(member.getMbrColr());
-        calCategory.setCtgrFlag('Y');
-        */
-        categoryRepository.save(calCategory);
-        memberRepository.updateSeqn(member.getMbrId(), member.getMbrSeqn());
+
+
+        Member updateMember = memberRepository.findByMbrId(member.getMbrId()).get();
+        updateMember.setMbrUpdt(LocalDateTime.now());
+        updateMember.setMbrSeqn(ctgrSeqn);
+        calendarService.AddPost(calCategory, updateMember);
+
+        member = memberRepository.findByMbrId(member.getMbrId()).get();
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
@@ -184,15 +181,70 @@ public class MCalendarController {
     }
 
     @PostMapping("/change")
-    public String calendarChangePost(@ModelAttribute("mbrId")String id, @ModelAttribute("mbrSeqn")String seqn
-                                    , HttpServletRequest request){
+    @ResponseBody
+    public String calendarChangePost(@RequestBody Member m
+                                    , HttpServletRequest request, Model model){
 
-        Integer res =  memberRepository.updateSeqn(id, Long.parseLong(seqn));
+        try{
+            Member updateMember = memberRepository.findByMbrId(m.getMbrId()).get();
+            updateMember.setMbrUpdt(LocalDateTime.now());
+            updateMember.setMbrSeqn(m.getMbrSeqn());
+            registerService.saveMember(updateMember);
+        }
+        catch (SQLException e){
+            return "false";
+        }
 
-        Member member = memberRepository.findByMbrId(id).get();
+        Member member = memberRepository.findByMbrId(m.getMbrId()).get();
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
+
+        List<CalCategory> calCategory = categoryRepository.findByCtgrId(member.getMbrId());
+
+        model.addAttribute("member",member);
+        model.addAttribute("categories",calCategory);
+
+
+        return "true";
+        /*
+        if(res == 1){
+            return "true";
+        }
+        else{
+            return "false";
+        }
+         */
+    }
+
+    @GetMapping("/delete")
+    public String CalendarReload(Model model, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Member m = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        List<CalCategory> calCategory = categoryRepository.findByCtgrId(m.getMbrId());
+
+        model.addAttribute("member",m);
+        model.addAttribute("categories",calCategory);
+
+        return "/view/calendar/changeCalendar";
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public String calendarDelete(@RequestParam("ctgrId")String id, @RequestParam("ctgrSeqn")String seqn
+                                ,Model model){
+
+        LocalDateTime nowT = LocalDateTime.now();
+
+        Integer res = categoryRepository.deleteByCtgrSeqn(id, Long.parseLong(seqn), nowT);
+
+        Member member = memberRepository.findByMbrId(id).get();
+        List<CalCategory> calCategory = categoryRepository.findByCtgrId(id);
+
+        model.addAttribute("member",member);
+        model.addAttribute("categories",calCategory);
+
         if(res == 1){
             return "true";
         }
@@ -201,18 +253,34 @@ public class MCalendarController {
         }
     }
 
-    @PostMapping("/delete")
-    public String calendarDelete(@RequestParam("ctgrId")String id, @RequestParam("ctgrSeqn")String seqn){
+    @PostMapping("/find")
+    @ResponseBody
+    public String calendarFind(@RequestParam("findTxt") String findTxt, @RequestParam("seqn")String seqn){
 
-        LocalDateTime nowT = LocalDateTime.now();
+        List<Schedule> schedule = schedulesRepository.findByScdSeqnAndScdCnts(Long.parseLong(seqn), "%"+findTxt+"%");
 
-        Integer res = categoryRepository.deleteByCtgrSeqn(id, Long.parseLong(seqn), nowT);
+        HashMap<String, Object> hash = new HashMap<>();
 
-        if(res == 1){
-            return "true";
+        JSONObject jsonObj = new JSONObject();
+        JSONArray jsonArr = new JSONArray();
+
+        for (int i = 0; i < schedule.size(); i++) {
+            hash.put("title", schedule.get(i).getScdTitle());
+            hash.put("start", schedule.get(i).getScdFrdt());
+            hash.put("frtm", schedule.get(i).getScdFrtm());
+            hash.put("contents",schedule.get(i).getScdCnts());
+            hash.put("mbrId",schedule.get(i).getScdId());
+            hash.put("nick",memberRepository.findNickName(schedule.get(i).getScdId()));
+
+            jsonObj = new JSONObject(hash);
+            jsonArr.put(jsonObj);
         }
-        else{
-            return "false";
-        }
+
+        return jsonArr.toString();
+    }
+
+    public <T> T testTemplate(T initVal){
+        T res = initVal;
+        return res;
     }
 }

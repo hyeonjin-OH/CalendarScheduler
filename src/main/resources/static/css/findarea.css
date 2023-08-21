@@ -1,0 +1,53 @@
+.find-modal-window{
+     background-color:#add8e6;
+     box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+     border: 1px solid rgba( 255, 255, 255, 0.18 );
+     width: 260px;
+     height: 500px;
+     position: absolute;
+     display: none;
+     align-items: center;
+     justify-content:center;
+     z-index:50;
+     right:0;
+ }
+.find-box{
+    width:220px;
+    height:30px;
+    margin : 20px 20px 15px 20px;
+    display: flex;
+    justify-content: center;
+}
+.list-box{
+    background-color: white;
+    border:1px solid rgba( 255, 255, 255, 0.18 );
+    width:220px;
+    height:410px;
+    margin : 15px 20px 20px 20px;
+    overflow-y:auto;
+    overflow-x:auto;
+
+}
+#find-icon{
+    cursor: pointer;
+}
+.find-input{
+    background-color: white;
+    border:1px solid rgba( 255, 255, 255, 0.18 );
+    width:182px;
+    height:26px;
+    margin-right:5px;
+}
+.find-list-div{
+    box-sizing: border-box;
+    padding : 0 10px 0 10px;
+    height:36px;
+    margin: 4px 0 4px 0;
+    display:flex;
+    align-items:center;
+
+
+}
+.find-list-text{
+    font-size:0.85em;
+}
