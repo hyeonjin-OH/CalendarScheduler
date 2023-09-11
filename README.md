@@ -8,11 +8,14 @@
 <img src="https://img.shields.io/badge/MariaDB-003545?style=flat-square&logo=MariaDB&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=HTML5&logoColor=white"/></a>
 
+
+
 #### 주요 기능 및 구현
 1. 회원가입 및 로그인
 2. 캘린더 생성  (본인 캘린더 및 공유 캘린더)
 3. 일정 등록 수정 삭제
 4. 일정내용 검색 기능
+
 
 
 #### 기능의 세부내용
@@ -29,3 +32,11 @@
 4. 일정 내용 검색 기능
    - 오늘일자 기준 1년 단위로 제목 및 내용 포함 검색
    - 검색 옵션은 추가 예정
+
+
+
+#### 주 고려사항
+1. Transaction
+2. JPA 사용
+3. RESTFUL API
+4. Spring Test
