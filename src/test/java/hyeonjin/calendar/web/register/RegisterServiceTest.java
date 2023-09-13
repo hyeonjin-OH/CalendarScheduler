@@ -4,6 +4,7 @@ import hyeonjin.calendar.domain.category.CalCategory;
 import hyeonjin.calendar.domain.category.CategoryRepository;
 import hyeonjin.calendar.domain.member.Member;
 import hyeonjin.calendar.domain.member.MembersRepository;
+import hyeonjin.calendar.domain.member.PwdEncrypt;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ class RegisterServiceTest {
     MembersRepository memberRepository;
     @Autowired(required = false)
     CategoryRepository categoryRepository;
+
+    @Autowired(required = false)
+    PwdEncrypt PwdEncryptClass;
 
     Member setMember1 = new Member();
     CalCategory setCategory = new CalCategory();
@@ -134,7 +138,7 @@ class RegisterServiceTest {
     @DisplayName("회원가입 시 카테고리 등록 문제 발생 시 롤백여부2")
     void register2(){
 
-        registerService = new RegisterService(memberRepository, categoryRepository);
+        registerService = new RegisterService(memberRepository, categoryRepository, PwdEncryptClass);
 
         Member setMember2 = Member.builder()
                 .mbrRgdt(LocalDateTime.now())

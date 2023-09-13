@@ -1,20 +1,19 @@
 package hyeonjin.calendar;
 
 
+import hyeonjin.calendar.domain.member.PwdEncrypt;
 import hyeonjin.calendar.web.argumentresolver.LoginMemberArgumentResolver;
-import hyeonjin.calendar.web.filter.LogFilter;
-import hyeonjin.calendar.web.filter.LoginCheckFilter;
 import hyeonjin.calendar.web.interceptor.LogInterceptor;
 import hyeonjin.calendar.web.interceptor.LoginCheckInterceptor;
 import io.netty.resolver.DefaultAddressResolverGroup;
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -58,7 +57,7 @@ public class WebConfig implements WebMvcConfigurer {
 
          */
     }
-
+/*
     @Bean
     public FilterRegistrationBean logFilter(){
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
@@ -78,6 +77,8 @@ public class WebConfig implements WebMvcConfigurer {
 
         return filterRegistrationBean;
     }
+
+ */
     @Bean
     public HttpClient httpClient() {
         return HttpClient.create()
@@ -88,6 +89,11 @@ public class WebConfig implements WebMvcConfigurer {
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
+    }
+
+    @Bean
+    public PwdEncrypt makePwdEncrpyt(){
+        return new PwdEncrypt();
     }
 
     @Bean
@@ -102,10 +108,15 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public GrantedAuthoritiesMapper userAuthoritiesMapper() {
+        return new NullAuthoritiesMapper();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
-        // 권한 체크 하지 않을 url
+        // 권한 체크 하지 않을 urRl
         http.authorizeRequests()
                 .requestMatchers("/", "/join","/login","/join/**","/login/**","/**").permitAll()
                 .anyRequest().authenticated();

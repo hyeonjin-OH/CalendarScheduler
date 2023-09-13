@@ -1,10 +1,12 @@
 package hyeonjin.calendar.web.login;
 
+import hyeonjin.calendar.domain.exception.CcalendarException;
+import hyeonjin.calendar.domain.exception.LoginFailedException;
 import hyeonjin.calendar.domain.jwt.JwtProvider;
-import hyeonjin.calendar.domain.login.GoogleLoginService;
 import hyeonjin.calendar.domain.login.LoginService;
 import hyeonjin.calendar.domain.member.Member;
 import hyeonjin.calendar.domain.member.MemberRepository;
+import hyeonjin.calendar.domain.member.PwdEncrypt;
 import hyeonjin.calendar.web.SessionConst;
 import hyeonjin.calendar.web.argumentresolver.Login;
 import hyeonjin.calendar.web.session.SessionManager;
@@ -47,8 +49,9 @@ public class LoginController {
 
     String redirectUrl = "http://localhost:8080/login/oauth2/google";
 
-    private final GoogleLoginService googleLoginService;
+    //private final GoogleLoginService googleLoginService;
     private final JwtProvider jwtProvider;
+    private final PwdEncrypt pwdEncrypt;
 
     @GetMapping("/login")
     public String login(@ModelAttribute("loginForm") LoginForm form, @Login Member loginMember){
@@ -67,14 +70,15 @@ public class LoginController {
             bindingResult.reject("notnull", "기입하지 않은 정보가 있습니다.");
             return "view/login/loginForm";
         }
-
-        Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
+        String pwd = pwdEncrypt.pwdEncrpyt(form.getPassword());
+        Member loginMember = loginService.login(form.getLoginId(), pwd);
 
         if(loginMember == null){
             bindingResult.reject("loginFail", "ID 또는 PW가 맞지 않습니다.");
 
             return "view/login/loginForm";
         }
+
 
         String accessToken = jwtProvider.createAccessToken(form.getLoginId(), "");
         String refreshToken = jwtProvider.createRefreshToken();
@@ -103,9 +107,13 @@ public class LoginController {
     }
 
     @GetMapping("/login/find")
-    public String findAccount(@ModelAttribute("member")Member member){
+    public String findAccount(@ModelAttribute("member")Member member) {
 
         return "view/login/findForm";
+    }
+    @PostMapping("/login/exception")
+        public void exceptionTest() throws CcalendarException {
+        throw new LoginFailedException();
     }
 /*
     @GetMapping("/login/socialgoogle")

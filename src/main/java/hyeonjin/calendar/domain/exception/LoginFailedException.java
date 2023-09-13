@@ -2,7 +2,7 @@ package hyeonjin.calendar.domain.exception;
 
 public class LoginFailedException extends CcalendarException{
 
-    public LoginFailedException(String message) {
+    public LoginFailedException() {
         super(ErrorCode.LOGIN_FAILED.getMessage());
     }
 

@@ -1,6 +1,5 @@
 package hyeonjin.calendar;
 
-import hyeonjin.calendar.domain.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @RequiredArgsConstructor
 public class SecurityConfig{
 
-    private final JwtProvider jwtProvider;
+    //private final JwtProvider jwtProvider;
 /*
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {

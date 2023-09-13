@@ -46,6 +46,16 @@ public class Member {
         this.mbrColr = "blue";
     }
 
+    @Builder(builderMethodName = "dtoMember", builderClassName = "dtoMember")
+    public Member(Long id, String mbrId, String mbrNick, String mbrEmail, String mbrPwd, Long mbrSeqn) {
+        this.id = id;
+        this.mbrId = mbrId;
+        this.mbrNick = mbrNick;
+        this.mbrEmail = mbrEmail;
+        this.mbrPwd = mbrPwd;
+        this.mbrSeqn = mbrSeqn;
+    }
+
     /** <summary>
      * 회원정보
      * 가입시 필요 정보 및 스케쥴 로드 시 필요 정보
@@ -63,8 +73,7 @@ public class Member {
      */
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-                   // ,generator = "memberId_Seq") seq cnt table
+    @GeneratedValue(strategy = GenerationType.IDENTITY)// ,generator = "memberId_Seq") seq cnt table
     private Long id;
 
     private LocalDateTime mbrRgdt;

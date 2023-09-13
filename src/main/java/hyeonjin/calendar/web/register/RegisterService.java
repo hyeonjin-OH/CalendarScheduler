@@ -3,8 +3,10 @@ package hyeonjin.calendar.web.register;
 
 import hyeonjin.calendar.domain.category.CalCategory;
 import hyeonjin.calendar.domain.category.CategoryRepository;
+import hyeonjin.calendar.domain.dto.MemberDTO;
 import hyeonjin.calendar.domain.member.Member;
 import hyeonjin.calendar.domain.member.MembersRepository;
+import hyeonjin.calendar.domain.member.PwdEncrypt;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -20,19 +24,22 @@ public class RegisterService {
     private final MembersRepository memberRepository;
 
     private final CategoryRepository categoryRepository;
-    @Transactional(rollbackOn = {SQLException.class})
-    public String register(Member member) throws SQLException{
 
+    private final PwdEncrypt pwdEncryptClass;
+    @Transactional(rollbackOn = {SQLException.class})
+    public MemberDTO register(Member member) throws SQLException{
+        Member newMember = new Member();
         Long seq = memberRepository.countBy();
+        String encryptedPwd = pwdEncryptClass.pwdEncrpyt(member.getMbrPwd());
 
         LocalDateTime nowT = LocalDateTime.now();
         if(member.getMbrSeqn()== null){
             member.setMbrSeqn(Long.parseLong(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++seq).toString()));
         }
-
+        member.setMbrPwd(encryptedPwd);
         member.setMbrRgdt(nowT);
         try{
-            Member newMember = memberRepository.save(member);
+            newMember = memberRepository.save(member);
 
             CalCategory calCategory = CalCategory.builder()
                     .ctgrRgdt(newMember.getMbrRgdt())
@@ -50,7 +57,16 @@ public class RegisterService {
             throw new SQLException(e);
         }
 
-        return "redirect:/login";
+        MemberDTO dto = MemberDTO.builder()
+                .id(newMember.getId())
+                .mbrId(newMember.getMbrId())
+                .mbrPwd(newMember.getMbrPwd())
+                .mbrEmail(newMember.getMbrEmail())
+                .mbrSeqn(newMember.getMbrSeqn())
+                .mbrNick(newMember.getMbrNick())
+                .build();
+
+        return dto;
     }
 
     @Transactional(rollbackOn = {SQLException.class})
@@ -64,7 +80,7 @@ public class RegisterService {
     }
 
     @Transactional(rollbackOn = {SQLException.class})
-    public String updatePwd(Member member) throws SQLException{
+    public Member updatePwd(Member member) throws SQLException{
 
         try{
             Member orginMember = memberRepository.findByMbrId(member.getMbrId()).get();
@@ -79,12 +95,16 @@ public class RegisterService {
         catch (Exception e){
             throw new SQLException(e);
         }
+        //업데이트 후 바뀐 멤버 정보 세션에 담기
+        Member newMember= memberRepository.findByMbrId(member.getMbrId()).get();
 
-        return "redirect:/login";
+        return newMember;
     }
 
     @Transactional(rollbackOn = {SQLException.class})
-    public String updateInfo(Member member) throws SQLException{
+    public MemberDTO updateInfo(Member member) throws SQLException{
+
+        Member updateMem = new Member();
 
         try{
             Member orginMember = memberRepository.findByMbrId(member.getMbrId()).get();
@@ -103,12 +123,32 @@ public class RegisterService {
                 orginMember.setMbrId(member.getMbrId());
             }
 
-            memberRepository.save(orginMember);
+            updateMem = memberRepository.save(orginMember);
         }
         catch (Exception e){
             throw new SQLException(e);
         }
 
-        return "redirect:/Calendar";
+        //업데이트 후 바뀐 멤버 정보 세션에 담기
+        MemberDTO dto= MemberDTO.builder()
+                .id(updateMem.getId())
+                .mbrId(updateMem.getMbrId())
+                .mbrPwd(updateMem.getMbrPwd())
+                .mbrEmail(updateMem.getMbrEmail())
+                .mbrSeqn(updateMem.getMbrSeqn())
+                .mbrNick(updateMem.getMbrNick())
+                .build();
+
+        return dto;
+    }
+
+    public Optional<Member> idDupChk(String id){
+        Optional<Member> res =  memberRepository.findByMbrId(id);
+        return res;
+    }
+
+    public Optional<Member> idValidateChk(String id, String email){
+        Optional<Member> res =  memberRepository.findByMbrIdAndMbrEmail(id, email);
+        return res;
     }
 }

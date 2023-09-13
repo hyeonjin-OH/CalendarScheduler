@@ -56,7 +56,7 @@ public class ScheduleController {
         if(schedule.getScdTotmchk()){
             schedule.setScdTotm("23:59:59");
         }
-        Long wkno = schedulesRepository.countByScdSeqn(ctgSeqn);
+        Long wkno = schedulesRepository.countByScdSeqn(ctgSeqn) +1L;
         schedule.setScdRgdt(nowT);
         schedule.setScdFlag("Y");
         schedule.setScdWkno(wkno);

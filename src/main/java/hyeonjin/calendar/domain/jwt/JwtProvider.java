@@ -8,6 +8,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+//@AllArgsConstructor
+@RequiredArgsConstructor
 public class JwtProvider {
     private static final String SUBJECT_ACCESS = "access_token";
     private static final String SUBJECT_REFRESH = "refresh_token";
