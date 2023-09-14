@@ -35,7 +35,7 @@ public class RegisterController {
 
 
     @PostMapping("/join")
-    public String register(@Valid @ModelAttribute("member")Member member, BindingResult bindingResult,
+    public String register(@Valid @ModelAttribute("member")MemberDTO member, BindingResult bindingResult,
                            HttpServletRequest request){
 
         if (!Pattern.matches("^(?=.*[a-z])(?=.*\\d)[a-z\\d]{6,18}$", member.getMbrId())) {
@@ -77,9 +77,8 @@ public class RegisterController {
     }
 
     @PostMapping("/update")
-    public String updateProfile(@ModelAttribute("member")Member member, BindingResult bindingResult,
+    public String updateProfile(@ModelAttribute("member")MemberDTO member, BindingResult bindingResult,
                            HttpServletRequest request){
-        Member rtn;
 
         if(member.getMbrPwd() != ""){
             if (!Pattern.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}$", member.getMbrPwd())) {
@@ -94,8 +93,7 @@ public class RegisterController {
             return "view/login/updateForm";
         }
 
-        MemberDTO m = new MemberDTO();
-        //Member m = new Member();
+        MemberDTO m;
         try{
             m = registerService.updateInfo(member);
         }
@@ -105,23 +103,15 @@ public class RegisterController {
             return "view/login/updateForm";
         }
 
-        rtn = Member.dtoMember()
-                .id(m.getId())
-                .mbrEmail(m.getMbrEmail())
-                .mbrId(m.getMbrId())
-                .mbrPwd(m.getMbrEmail())
-                .mbrNick(m.getMbrNick())
-                .mbrSeqn(m.getMbrSeqn())
-                .build();
         //업데이트 후 바뀐 멤버 정보 세션에 담기
         HttpSession session = request.getSession();
-        session.setAttribute(SessionConst.LOGIN_MEMBER, rtn);
+        session.setAttribute(SessionConst.LOGIN_MEMBER, m.ToEntity());
 
         return "redirect:/update";
     }
 
     @PostMapping("/login/find")
-    public String updatePwd(@Valid @ModelAttribute("member")Member member, BindingResult bindingResult,
+    public String updatePwd(@Valid @ModelAttribute("member")MemberDTO member, BindingResult bindingResult,
                                 HttpServletRequest request){
         if(bindingResult.hasErrors()) {
             bindingResult.reject("UpdateFail");

@@ -27,8 +27,8 @@ public class RegisterService {
 
     private final PwdEncrypt pwdEncryptClass;
     @Transactional(rollbackOn = {SQLException.class})
-    public MemberDTO register(Member member) throws SQLException{
-        Member newMember = new Member();
+    public MemberDTO register(MemberDTO member) throws SQLException{
+        Member newMember;
         Long seq = memberRepository.countBy();
         String encryptedPwd = pwdEncryptClass.pwdEncrpyt(member.getMbrPwd());
 
@@ -36,10 +36,13 @@ public class RegisterService {
         if(member.getMbrSeqn()== null){
             member.setMbrSeqn(Long.parseLong(DateTimeFormatter.ofPattern("HHmmss").format(nowT) + (++seq).toString()));
         }
-        member.setMbrPwd(encryptedPwd);
+        member.encryptPwd(encryptedPwd);
         member.setMbrRgdt(nowT);
+
+        Member saveMember = member.ToEntity();
+
         try{
-            newMember = memberRepository.save(member);
+            newMember = memberRepository.save(saveMember);
 
             CalCategory calCategory = CalCategory.builder()
                     .ctgrRgdt(newMember.getMbrRgdt())
@@ -57,14 +60,7 @@ public class RegisterService {
             throw new SQLException(e);
         }
 
-        MemberDTO dto = MemberDTO.builder()
-                .id(newMember.getId())
-                .mbrId(newMember.getMbrId())
-                .mbrPwd(newMember.getMbrPwd())
-                .mbrEmail(newMember.getMbrEmail())
-                .mbrSeqn(newMember.getMbrSeqn())
-                .mbrNick(newMember.getMbrNick())
-                .build();
+        MemberDTO dto = newMember.ToDto();
 
         return dto;
     }
@@ -80,65 +76,71 @@ public class RegisterService {
     }
 
     @Transactional(rollbackOn = {SQLException.class})
-    public Member updatePwd(Member member) throws SQLException{
+    public MemberDTO updatePwd(MemberDTO member) throws SQLException{
 
         try{
-            Member orginMember = memberRepository.findByMbrId(member.getMbrId()).get();
-
-            orginMember.setMbrEmail(member.getMbrEmail());
-            orginMember.setMbrUpdt(LocalDateTime.now());
-            orginMember.setMbrId(member.getMbrId());
-            orginMember.setMbrPwd(member.getMbrPwd());
-
-            //memberRepository.save(orginMember);
+            MemberDTO orginMember = memberRepository.findByMbrId(member.getMbrId()).get().ToDto();
+            orginMember.UpdatePwd(member.getMbrId(), member.getMbrEmail(), member.getMbrPwd(), LocalDateTime.now());
+            orginMember.ToEntity();
         }
         catch (Exception e){
             throw new SQLException(e);
         }
-        //업데이트 후 바뀐 멤버 정보 세션에 담기
-        Member newMember= memberRepository.findByMbrId(member.getMbrId()).get();
+        MemberDTO newMember= memberRepository.findByMbrId(member.getMbrId()).get().ToDto();
 
         return newMember;
     }
 
     @Transactional(rollbackOn = {SQLException.class})
-    public MemberDTO updateInfo(Member member) throws SQLException{
+    public MemberDTO updateInfo(MemberDTO member) throws SQLException{
 
-        Member updateMem = new Member();
+        Member updateMem;
+        MemberDTO setMember;
 
         try{
             Member orginMember = memberRepository.findByMbrId(member.getMbrId()).get();
+            setMember = MemberDTO.allBuilder()
+                            .id(orginMember.getId())
+                            .mbrRgdt(orginMember.getMbrRgdt())
+                            .mbrUpdt(orginMember.getMbrUpdt())
+                            .mbrId(orginMember.getMbrId())
+                            .mbrPwd(orginMember.getMbrPwd())
+                            .mbrNick(orginMember.getMbrNick())
+                            .mbrEmail(orginMember.getMbrEmail())
+                            .mbrSeqn(orginMember.getMbrSeqn())
+                            .mbrColr(orginMember.getMbrColr())
+                            .mbrCtgr(orginMember.getMbrCtgr())
+                            .mbrAccesstoken(orginMember.getMbrAccesstoken())
+                            .mbrRefreshtoken(orginMember.getMbrRefreshtoken())
+                            .mbrSocialserver(orginMember.getMbrSocialserver())
+                            .build();
 
             if(member.getMbrPwd()!= ""){
-                orginMember.setMbrNick(member.getMbrNick());
-                orginMember.setMbrUpdt(LocalDateTime.now());
-                orginMember.setMbrEmail(member.getMbrEmail());
-                orginMember.setMbrPwd(member.getMbrPwd());
-                orginMember.setMbrId(member.getMbrId());
+                setMember = setMember.toBuilder()
+                        .mbrNick(member.getMbrNick())
+                        .mbrUpdt(LocalDateTime.now())
+                        .mbrEmail(member.getMbrEmail())
+                        .mbrPwd(member.getMbrPwd())
+                        .mbrId(member.getMbrId())
+                        .build();
+
             }
             else{
-                orginMember.setMbrNick(member.getMbrNick());
-                orginMember.setMbrUpdt(LocalDateTime.now());
-                orginMember.setMbrEmail(member.getMbrEmail());
-                orginMember.setMbrId(member.getMbrId());
+                setMember = setMember.toBuilder()
+                        .mbrNick(member.getMbrNick())
+                        .mbrUpdt(LocalDateTime.now())
+                        .mbrEmail(member.getMbrEmail())
+                        .mbrId(member.getMbrId())
+                        .build();
             }
 
-            updateMem = memberRepository.save(orginMember);
+            updateMem = memberRepository.save(setMember.ToEntity());
         }
         catch (Exception e){
             throw new SQLException(e);
         }
-
         //업데이트 후 바뀐 멤버 정보 세션에 담기
-        MemberDTO dto= MemberDTO.builder()
-                .id(updateMem.getId())
-                .mbrId(updateMem.getMbrId())
-                .mbrPwd(updateMem.getMbrPwd())
-                .mbrEmail(updateMem.getMbrEmail())
-                .mbrSeqn(updateMem.getMbrSeqn())
-                .mbrNick(updateMem.getMbrNick())
-                .build();
-
+        MemberDTO dto= updateMem.ToDto();
         return dto;
     }
 
