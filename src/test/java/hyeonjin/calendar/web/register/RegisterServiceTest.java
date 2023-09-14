@@ -34,7 +34,7 @@ class RegisterServiceTest {
     @Autowired(required = false)
     PwdEncrypt PwdEncryptClass;
 
-    Member setMember1 = new Member();
+    Member setMember1;
     CalCategory setCategory = new CalCategory();
 
     EmbeddedDatabase db;

@@ -71,7 +71,8 @@ public class LoginController {
             return "view/login/loginForm";
         }
         String pwd = pwdEncrypt.pwdEncrpyt(form.getPassword());
-        Member loginMember = loginService.login(form.getLoginId(), pwd);
+        //Member loginMember = loginService.login(form.getLoginId(), pwd);
+        Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
 
         if(loginMember == null){
             bindingResult.reject("loginFail", "ID 또는 PW가 맞지 않습니다.");

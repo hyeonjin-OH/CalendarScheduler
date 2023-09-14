@@ -1,16 +1,15 @@
 package hyeonjin.calendar.domain.member;
 
+import hyeonjin.calendar.domain.dto.MemberDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
 @Data
+//@Getter
 @Entity(name="memberinfo")
 @Table(name="memberinfo")
 @NoArgsConstructor
@@ -46,14 +45,34 @@ public class Member {
         this.mbrColr = "blue";
     }
 
-    @Builder(builderMethodName = "dtoMember", builderClassName = "dtoMember")
-    public Member(Long id, String mbrId, String mbrNick, String mbrEmail, String mbrPwd, Long mbrSeqn) {
-        this.id = id;
-        this.mbrId = mbrId;
-        this.mbrNick = mbrNick;
-        this.mbrEmail = mbrEmail;
-        this.mbrPwd = mbrPwd;
+
+
+    public void setMbrSeqn(Long mbrSeqn) {
         this.mbrSeqn = mbrSeqn;
+    }
+
+    public void setMbrUpdt(LocalDateTime mbrUpdt) {
+        this.mbrUpdt = mbrUpdt;
+    }
+
+    public MemberDTO ToDto(){
+        return MemberDTO.allBuild()
+                .member(this)
+                .build();
+//                .id(id)
+//                .mbrRgdt(mbrRgdt)
+//                .mbrUpdt(mbrUpdt)
+//                .mbrId(mbrId)
+//                .mbrPwd(mbrPwd)
+//                .mbrNick(mbrNick)
+//                .mbrEmail(mbrEmail)
+//                .mbrSeqn(mbrSeqn)
+//                .mbrColr(mbrColr)
+//                .mbrCtgr(mbrCtgr)
+//                .mbrAccesstoken(mbrAccesstoken)
+//                .mbrRefreshtoken(mbrRefreshtoken)
+//                .mbrSocialserver(mbrSocialserver)
+//                .build();
     }
 
     /** <summary>
