@@ -7,7 +7,7 @@ import hyeonjin.calendar.domain.member.MembersRepository;
 import hyeonjin.calendar.domain.schedule.Schedule;
 import hyeonjin.calendar.domain.schedule.SchedulesRepository;
 import hyeonjin.calendar.web.SessionConst;
-import hyeonjin.calendar.web.register.RegisterService;
+import hyeonjin.calendar.web.register.RegisterServiceImpl;
 import hyeonjin.calendar.web.session.SessionManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -39,7 +39,7 @@ public class MCalendarController {
 
     private final SessionManager sessionManager;
     private final CalendarService calendarService;
-    private final RegisterService registerService;
+    private final RegisterServiceImpl registerServiceImpl;
 
     @GetMapping
     public String scheduleInfo(@ModelAttribute("schedule") Schedule scd,
@@ -189,7 +189,7 @@ public class MCalendarController {
             Member updateMember = memberRepository.findByMbrId(m.getMbrId()).get();
             updateMember.setMbrUpdt(LocalDateTime.now());
             updateMember.setMbrSeqn(m.getMbrSeqn());
-            registerService.saveMember(updateMember);
+            registerServiceImpl.saveMember(updateMember);
         }
         catch (SQLException e){
             return "false";

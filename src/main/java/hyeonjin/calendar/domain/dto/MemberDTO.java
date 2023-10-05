@@ -24,18 +24,9 @@ public class MemberDTO {
     private String mbrRefreshtoken;
     private String mbrSocialserver;
 
-
     public void UpdatePwd(String mbrId, String mbrEmail, String mbrPwd, LocalDateTime mbrUpdt){
         this.mbrId = mbrId;
         this.mbrEmail = mbrEmail;
-        this.mbrPwd = mbrPwd;
-        this.mbrUpdt = mbrUpdt;
-    }
-
-    public void UpdateInfo(String mbrId, String mbrEmail, String mbrPwd, String mbrNick, LocalDateTime mbrUpdt){
-        this.mbrId = mbrId;
-        this.mbrEmail = mbrEmail;
-        this.mbrNick = mbrNick;
         this.mbrPwd = mbrPwd;
         this.mbrUpdt = mbrUpdt;
     }

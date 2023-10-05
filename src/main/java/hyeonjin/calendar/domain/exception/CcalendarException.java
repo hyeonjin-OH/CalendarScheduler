@@ -2,18 +2,20 @@ package hyeonjin.calendar.domain.exception;
 
 import lombok.Getter;
 
+//Ccalendar 전체 익셉션관
 @Getter
-public abstract class CcalendarException extends Exception{
+public class CcalendarException extends RuntimeException{
 
-    public CcalendarException(String message, Throwable cause) {
-        super(message, cause);
+    private final ErrorCode errorCode;
+    public CcalendarException(ErrorCode e) {
+        super(e.getMessage());
+        this.errorCode = e;
     }
 
-    public CcalendarException(String message) {
-        super(message);
+    public int getStatus(ErrorCode e) {
+        return e.getStatus();
     }
 
-    public abstract String getErrorCode();
-
-    public abstract int getStatus();
-}
+    public String getErrorCode(ErrorCode e) {
+        return e.getErrCode();
+    }}

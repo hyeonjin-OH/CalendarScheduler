@@ -16,11 +16,10 @@ public class CcalendarExceptionHandler {
         HttpHeaders responseHeaders = new HttpHeaders();
 
         Map<String, String> map = new HashMap<>();
-        map.put("errorCode", e.getErrorCode());
-        map.put("errorStatus", Integer.toString(e.getStatus()));
-        map.put("message", e.getMessage());
+        map.put("errorCode", e.getErrorCode().getErrCode());
+        map.put("errorStatus", Integer.toString(e.getErrorCode().getStatus()));
+        map.put("message", e.getErrorCode().getMessage());
 
-        return new ResponseEntity<>(map, responseHeaders, e.getStatus());
+        return new ResponseEntity<>(map, responseHeaders, e.getErrorCode().getStatus());
     }
-
 }

@@ -46,11 +46,6 @@ public class Member {
     }
 
 
-
-    public void setMbrSeqn(Long mbrSeqn) {
-        this.mbrSeqn = mbrSeqn;
-    }
-
     public void setMbrUpdt(LocalDateTime mbrUpdt) {
         this.mbrUpdt = mbrUpdt;
     }
@@ -59,20 +54,6 @@ public class Member {
         return MemberDTO.allBuild()
                 .member(this)
                 .build();
-//                .id(id)
-//                .mbrRgdt(mbrRgdt)
-//                .mbrUpdt(mbrUpdt)
-//                .mbrId(mbrId)
-//                .mbrPwd(mbrPwd)
-//                .mbrNick(mbrNick)
-//                .mbrEmail(mbrEmail)
-//                .mbrSeqn(mbrSeqn)
-//                .mbrColr(mbrColr)
-//                .mbrCtgr(mbrCtgr)
-//                .mbrAccesstoken(mbrAccesstoken)
-//                .mbrRefreshtoken(mbrRefreshtoken)
-//                .mbrSocialserver(mbrSocialserver)
-//                .build();
     }
 
     /** <summary>

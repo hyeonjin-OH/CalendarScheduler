@@ -1,7 +1,7 @@
 package hyeonjin.calendar.web.login;
 
 import hyeonjin.calendar.domain.exception.CcalendarException;
-import hyeonjin.calendar.domain.exception.LoginFailedException;
+import hyeonjin.calendar.domain.exception.ErrorCode;
 import hyeonjin.calendar.domain.jwt.JwtProvider;
 import hyeonjin.calendar.domain.login.LoginService;
 import hyeonjin.calendar.domain.member.Member;
@@ -75,6 +75,7 @@ public class LoginController {
         Member loginMember = loginService.login(form.getLoginId(), form.getPassword());
 
         if(loginMember == null){
+
             bindingResult.reject("loginFail", "ID 또는 PW가 맞지 않습니다.");
 
             return "view/login/loginForm";
@@ -114,7 +115,7 @@ public class LoginController {
     }
     @PostMapping("/login/exception")
         public void exceptionTest() throws CcalendarException {
-        throw new LoginFailedException();
+        throw new CcalendarException(ErrorCode.LOGIN_FAILED);
     }
 /*
     @GetMapping("/login/socialgoogle")

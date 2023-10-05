@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 public class RegisterController {
 
     //private final MembersRepository memberRepository;
-    private final RegisterService registerService;
+    private final RegisterServiceImpl registerServiceImpl;
 
     @GetMapping("/join")
     public String register(@ModelAttribute("member")Member member){
@@ -53,7 +53,7 @@ public class RegisterController {
         }
 
         try{
-            MemberDTO mbrDto = registerService.register(member);
+            MemberDTO mbrDto = registerServiceImpl.register(member);
         }
         catch (SQLException e){
 
@@ -95,7 +95,7 @@ public class RegisterController {
 
         MemberDTO m;
         try{
-            m = registerService.updateInfo(member);
+            m = registerServiceImpl.updateInfo(member);
         }
         catch (Exception e){
             bindingResult.reject("updateFail");
@@ -120,7 +120,7 @@ public class RegisterController {
         }
 
         try{
-            registerService.updatePwd(member);
+            registerServiceImpl.updatePwd(member);
             return "redirect:/login";
         }
         catch (SQLException e){
@@ -134,7 +134,7 @@ public class RegisterController {
     public Boolean idDupChk(@ModelAttribute("mbrid")String mbrid){
         String id = mbrid;
 
-        if(registerService.idDupChk(id).equals(Optional.empty())){
+        if(registerServiceImpl.idDupChk(id).equals(Optional.empty())){
             return true;
         }
         else {
@@ -148,7 +148,7 @@ public class RegisterController {
         String id = mbrid;
         String email = mbremail;
 
-        if(registerService.idValidateChk(id, email).isPresent()) {
+        if(registerServiceImpl.idValidateChk(id, email).isPresent()) {
             return false;
         }
         else {
